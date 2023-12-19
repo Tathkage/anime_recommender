@@ -1,0 +1,81 @@
+# General
+*.log
+*.pyc
+*.db
+*.sqlite3
+node_modules/
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.temp
+
+# Python/Django specific
+venv/
+*.pyo
+*.pyd
+__pycache__/
+*.pyc
+.env
+*.env
+.env.*
+.envrc
+.Python
+celerybeat-schedule
+celerybeat.pid
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+*.egg-info/
+.installed.cfg
+*.egg
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.depend
+.buildozer
+.python-version
+
+# Database
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+db.sqlite3-journal
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Angular Frontend specific
+/frontend/anime-recommender/dist/
+/frontend/anime-recommender/node_modules/
+/frontend/anime-recommender/src/environments/environment.prod.ts
+/frontend/anime-recommender/src/environments/environment.ts
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
