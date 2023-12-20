@@ -1,0 +1,21 @@
+.anime-list-container {
+    padding: 20px;
+}
+
+.anime-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.anime-table, .anime-table th, .anime-table td {
+    border: 1px solid #ddd;
+}
+
+.anime-table th, .anime-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.anime-table th {
+    background-color: #f2f2f2;
+}
