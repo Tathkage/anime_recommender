@@ -1,15 +1,7 @@
 <div class="anime-list-container">
     <h2>Anime List</h2>
-    <table class="anime-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data rows will be populated here -->
-        </tbody>
-    </table>
+    <div *ngFor="let anime of animeList">
+        <h3>{{ anime.Title }}</h3>
+        <p>Rating: {{ anime.Rating }}</p>
+    </div>      
 </div>
