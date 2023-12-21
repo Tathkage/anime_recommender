@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+import anime_recommender.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('temp/', views.runScraper, name='runScraper')
 ]
