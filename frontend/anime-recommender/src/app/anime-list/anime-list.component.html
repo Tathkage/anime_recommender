@@ -1,7 +1,17 @@
-<div class="anime-list-container">
-    <h2>Anime List</h2>
-    <div *ngFor="let anime of animeList">
-        <h3>{{ anime.Title }}</h3>
-        <p>Rating: {{ anime.Rating }}</p>
-    </div>      
-</div>
+<div class="anime-table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let anime of animeList">
+          <td>{{ anime.Title }}</td>
+          <td>{{ anime.Rating }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
