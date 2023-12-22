@@ -1,0 +1,21 @@
+.watchlist-container {
+    padding: 20px;
+}
+
+.watchlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.watchlist-table, .watchlist-table th, .watchlist-table td {
+    border: 1px solid #ddd;
+}
+
+.watchlist-table th, .watchlist-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.watchlist-table th {
+    background-color: #f2f2f2;
+}
