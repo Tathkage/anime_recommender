@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { AnimeService } from '../services/anime.service';
+import { AuthService } from '../services/auth.service';
 
 interface Anime {
   Title: string;
@@ -23,11 +24,20 @@ interface AnimeData {
 export class AnimeListComponent implements OnInit {
   animeList: Anime[] = [];
 
-  constructor(private animeService: AnimeService) {}
+  constructor(private animeService: AnimeService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.animeService.getAnimeList().subscribe((data: AnimeData) => {
       this.animeList = data['Anime Info'];
     });
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/user-login']);
+  }
+
+  navigateToWatchlist(): void {
+    this.router.navigate(['/user-watchlist']);
   }
 }
