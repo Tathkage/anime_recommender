@@ -1,0 +1,18 @@
+<div class="login-container">   
+    <h2>Sign Up</h2>
+    <form (submit)="onSignUp()">
+        <div class="form-group">
+            <label for="signup-username">Username:</label>
+            <input type="text" id="signup-username" [(ngModel)]="signupData.username" name="signup-username">
+        </div>
+        <div class="form-group">
+            <label for="signup-email">Email:</label>
+            <input type="email" id="signup-email" [(ngModel)]="signupData.email" name="signup-email">
+        </div>
+        <div class="form-group">
+            <label for="signup-password">Password:</label>
+            <input type="password" id="signup-password" [(ngModel)]="signupData.password" name="signup-password">
+        </div>
+        <button type="submit">Sign Up</button>
+    </form>
+</div> 

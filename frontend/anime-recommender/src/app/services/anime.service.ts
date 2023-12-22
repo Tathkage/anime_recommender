@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
 export class AnimeService {
   private apiUrl = 'http://localhost:8000/api/temp-scraper/';
 
