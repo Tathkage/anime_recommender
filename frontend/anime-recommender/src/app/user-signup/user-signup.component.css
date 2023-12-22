@@ -36,7 +36,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-.signup-button {
+.login-button {
     width: 300px; /* Same width as the login container */
     padding: 10px;
     background-color: #007bff;
@@ -48,6 +48,6 @@ button:hover {
     margin: 20px auto; /* Center align and add margin from the container */
 }
 
-.signup-button:hover {
+.login-button:hover {
     background-color: #0056b3;
 }
