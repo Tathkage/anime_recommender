@@ -25,4 +25,8 @@ export class UserLoginComponent {
       this.errorMessage = 'Login failed: Incorrect username or password.'; // Display error message
     });
   }
+
+  redirectToSignup(): void {
+    this.router.navigate(['/user-signup']);
+  }
 }

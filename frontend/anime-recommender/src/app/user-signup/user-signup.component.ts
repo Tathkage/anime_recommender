@@ -25,4 +25,8 @@ export class UserSignupComponent {
         this.errorMessage = 'Sign-up failed: Please try again.'; // Display error message
         });
     }
+
+    redirectToLogin(): void {
+      this.router.navigate(['/user-login']);
+    }
 }
