@@ -27,6 +27,12 @@ export class AnimeListComponent implements OnInit {
   constructor(private animeService: AnimeService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    // this.animeService.getAnimeList().subscribe((data: AnimeData) => {
+    //   this.animeList = data['Anime Info'];
+    // });
+  }
+
+  getAnimeList(): void {
     this.animeService.getAnimeList().subscribe((data: AnimeData) => {
       this.animeList = data['Anime Info'];
     });

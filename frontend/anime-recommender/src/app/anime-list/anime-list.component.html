@@ -1,19 +1,21 @@
 <button (click)="onLogout()">Logout</button>
 <button (click)="navigateToWatchlist()">Go to Watchlist</button>
 <div class="anime-table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let anime of animeList">
-          <td>{{ anime.Title }}</td>
-          <td>{{ anime.Rating }}</td>
-        </tr>
-      </tbody>
+	<button (click)="getAnimeList()">Generate</button>
+
+	<table *ngIf="animeList.length > 0">
+    	<thead>
+        	<tr>
+          		<th>Title</th>
+          		<th>Rating</th>
+        	</tr>
+      	</thead>
+      	<tbody>
+       		<tr *ngFor="let anime of animeList">
+          		<td>{{ anime.Title }}</td>
+          		<td>{{ anime.Rating }}</td>
+        	</tr>
+      	</tbody>
     </table>
-  </div>
+</div>
   
