@@ -1,20 +1,55 @@
+/* Style for the container */
 .anime-table-container {
-    max-width: 600px;
-    margin: 0 auto;
-  }
+	margin: 20px auto; /* Centering the container */
+	width: 80%; /* Adjust width as needed */
+	max-width: 600px; /* Maximum width */
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	background-color: #f9f9f9;
+	text-align: center; /* Centering content like the button */
+}
   
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+/* Style for the button */
+button {
+	background-color: #007bff;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s;
+	display: inline-block; /* Allows text-align center to affect it */
+	margin-bottom: 20px; /* Space between button and table */
+}
   
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
+button:hover {
+	background-color: #0056b3;
+}
   
-  thead {
-    background-color: #f2f2f2;
-  }
+/* Style for the table */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: auto; /* Centering the table */
+}
+  
+th, td {
+	text-align: left;
+	padding: 8px;
+}
+  
+th {
+	background-color: #4CAF50;
+	color: white;
+}
+  
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+  
+tr:hover {
+	background-color: #ddd;
+}
   
