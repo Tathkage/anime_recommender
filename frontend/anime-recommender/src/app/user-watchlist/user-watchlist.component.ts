@@ -19,4 +19,8 @@ export class UserWatchlistComponent {
     this.authService.logout();
     this.router.navigate(['/user-login']);
   }
+
+  navigateToAnimeList(): void {
+    this.router.navigate(['/anime-list']);
+  }
 }

@@ -18,6 +18,12 @@ export class UserSignupComponent {
 
     constructor(private authService: AuthService, private router: Router) {}
 
+    ngOnInit(): void {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/anime-list']);
+      }
+    }
+
     onSignUp(): void {
         this.authService.signUp(this.signupData).subscribe(result => {
         this.router.navigate(['/anime-list']); // Redirect on success

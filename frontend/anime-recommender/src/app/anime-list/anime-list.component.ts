@@ -36,4 +36,8 @@ export class AnimeListComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/user-login']);
   }
+
+  navigateToWatchlist(): void {
+    this.router.navigate(['/user-watchlist']);
+  }
 }
