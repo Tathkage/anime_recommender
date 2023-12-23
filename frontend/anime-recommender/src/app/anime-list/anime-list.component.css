@@ -1,17 +1,19 @@
 /* Style for the container */
-.anime-table-container {
-	margin: 20px auto; /* Centering the container */
-	width: 80%; /* Adjust width as needed */
-	max-width: 600px; /* Maximum width */
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	background-color: #f9f9f9;
-	text-align: center; /* Centering content like the button */
-}
+.anime-list-container {
+	margin: 20px auto;
+	width: 80%;
+	max-width: 1000px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
   
-/* Style for the button */
-button {
+  /* Style for the generate button */
+  .generate-button {
+	margin-bottom: 20px;
+  }
+  
+  .generate-button button {
 	background-color: #007bff;
 	color: white;
 	padding: 10px 20px;
@@ -20,36 +22,57 @@ button {
 	cursor: pointer;
 	font-size: 16px;
 	transition: background-color 0.3s;
-	display: inline-block; /* Allows text-align center to affect it */
-	margin-bottom: 20px; /* Space between button and table */
-}
+  }
   
-button:hover {
+  .generate-button button:hover {
 	background-color: #0056b3;
-}
+  }
   
-/* Style for the table */
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin: auto; /* Centering the table */
-}
+  /* Style for the anime cards */
+  .anime-cards {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+  }
   
-th, td {
+  .anime-card {
+	background-color: #f5f5f5; /* Light gray background color */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin: 10px 0;
+	padding: 20px;
+	width: calc(33% - 20px); /* Adjust width as needed (3 cards per row) */
+	box-sizing: border-box;
 	text-align: left;
-	padding: 8px;
-}
+	color: #333; /* Dark gray text color */
+  }
   
-th {
-	background-color: #4CAF50;
-	color: white;
-}
+  /* Style for the anime header (title and rating) */
+  .anime-header {
+	margin-bottom: 10px;
+  }
   
-tr:nth-child(even) {
-	background-color: #f2f2f2;
-}
+  /* Style for the anime title */
+  .anime-header h3 {
+	font-size: 1.2rem;
+	margin: 0;
+  }
   
-tr:hover {
-	background-color: #ddd;
-}
+  /* Style for the anime rating */
+  .anime-header p {
+	font-size: 1rem;
+	margin: 0;
+	color: #777; /* Slightly lighter text color */
+  }
+  
+  /* Style for the anime information section */
+  .anime-info {
+	margin-bottom: 10px;
+  }
+  
+  /* Style for the anime description */
+  .anime-description {
+	color: #555; /* Dark gray description text color */
+  }
   

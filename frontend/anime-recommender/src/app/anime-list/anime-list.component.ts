@@ -7,7 +7,13 @@ import { AuthService } from '../services/auth.service';
 interface Anime {
   Title: string;
   Rating: string;
+  Status: string;
+  'Episode Count': string;
+  'Episode Length': string;
+  'Release Year': string;
+  Description: string;
 }
+
 
 interface AnimeData {
   'Anime Info': Anime[];
@@ -26,11 +32,7 @@ export class AnimeListComponent implements OnInit {
 
   constructor(private animeService: AnimeService, private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-    // this.animeService.getAnimeList().subscribe((data: AnimeData) => {
-    //   this.animeList = data['Anime Info'];
-    // });
-  }
+  ngOnInit(): void {}
 
   getAnimeList(): void {
     this.animeService.getAnimeList().subscribe((data: AnimeData) => {
