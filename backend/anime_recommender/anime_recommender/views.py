@@ -1,13 +1,17 @@
 from django.http import JsonResponse, HttpResponse
-import anime_recommender.scraper.scraper as scraper
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+import anime_recommender.scraper.scraper as scraper
 import json
 
-async def runScraper(request):
+async def runTopAnime(request):
     data = await scraper.topAnime()
+    return JsonResponse(data, safe=False)
+
+async def runSpecificAnime(request):
+    data = await scraper.specificAnime()
     return JsonResponse(data, safe=False)
 
 @csrf_exempt

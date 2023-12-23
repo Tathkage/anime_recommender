@@ -16,7 +16,7 @@ async def scrapeWebsite(url):
 async def topAnime():
     response = await scrapeWebsite("https://myanimelist.net/topanime.php")
     
-    soup = BeautifulSoup(response, 'html.parser')
+    soup = BeautifulSoup(response.content, 'html.parser')
     
     rankingRows = soup.find_all("tr", class_="ranking-list")
     animeInfo = []
@@ -31,4 +31,26 @@ async def topAnime():
             animeInfo.append({"Title": animeTitle, "Rating": animeRating})
             print(f"Title: {animeTitle}, Rating: {animeRating}")
         
+    return {"Anime Info": animeInfo}
+
+async def specificAnime():
+    response = await scrapeWebsite("https://myanimelist.net/anime/16498/Shingeki_no_Kyojin")
+    
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    info = soup.find_all("div", class_="leftside")
+    animeInfo = []
+    
+    for leftside in info:
+        divAll = leftside.find_all("div", class_="spaceit_pad")
+        
+        for div in divAll:
+            animeInfo.append(div.get_text(strip=True))
+            
+    for leftside in info:
+        divAll = leftside.find_all("div", class_="broadcast")
+        
+        for div in divAll:
+            animeInfo.append(div.get_text(strip=True))
+    
     return {"Anime Info": animeInfo}

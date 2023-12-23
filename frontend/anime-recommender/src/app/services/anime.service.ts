@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 })
 
 export class AnimeService {
-  private apiUrl = 'http://localhost:8000/api/temp-scraper/';
+  private apiUrl = 'http://localhost:8000/api/top-anime/';
+  // private apiUrl = 'http://localhost:8000/api/specific-anime'; not sure if this api needs its own class rn
 
   constructor(private http: HttpClient) { }
 

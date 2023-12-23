@@ -20,7 +20,8 @@ import anime_recommender.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/temp-scraper/', views.runScraper, name='runScraper'),
+    path('api/top-anime/', views.runTopAnime, name='runTopAnime'),
+    path('api/specific-anime', views.runSpecificAnime, name='runSpecificAnime'),
     path('api/signup/', views.register_user, name='register_user'),
     path('api/login/', views.login_user, name='login_user')
 ]
