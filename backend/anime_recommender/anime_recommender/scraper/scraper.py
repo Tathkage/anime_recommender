@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import httpx
 import re
 
+GENRE_BASE_URL = "https://myanimelist.net/anime/genre/"
+
 async def scrapeWebsite(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
@@ -14,8 +16,10 @@ async def scrapeWebsite(url):
         else:
             response.raise_for_status()
         
-async def topAnime():
-    response = await scrapeWebsite("https://myanimelist.net/anime/genre/1/Action")  # Change the URL
+async def topAnime(genre_number, genre_name):
+
+    genre_url = f"{GENRE_BASE_URL}{genre_number}/{genre_name}"
+    response = await scrapeWebsite(genre_url)
     
     soup = BeautifulSoup(response.text, 'html.parser')
     
