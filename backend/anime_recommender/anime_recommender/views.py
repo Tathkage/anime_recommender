@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-async def runScraper(request):
-    data = await scraper.topAnime()
+async def runScraper(request, genre_number, genre_name):
+    data = await scraper.topAnime(genre_number, genre_name)
     return JsonResponse(data, safe=False)
 
 @csrf_exempt

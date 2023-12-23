@@ -29,15 +29,45 @@ interface AnimeData {
 
 export class AnimeListComponent implements OnInit {
   animeList: Anime[] = [];
+  selectedGenreNumber: string = "1"; // Default genre number is 1 for Action
+  selectedGenreName: string = "Action"; // Default genre is Action
 
   constructor(private animeService: AnimeService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {}
 
   getAnimeList(): void {
-    this.animeService.getAnimeList().subscribe((data: AnimeData) => {
+    this.animeService.getAnimeList(this.selectedGenreNumber, this.selectedGenreName).subscribe((data: AnimeData) => {
       this.animeList = data['Anime Info'];
     });
+  }
+
+  onGenreChange(selectedGenreName: string): void {
+    const genreMap: { [key: string]: string } = {
+      'Action': '1',
+      'Adventure': '2',
+      'Avant Garde': '5',
+      'Award Winning': '46',
+      'Boys Love': '28',
+      'Comedy': '4',
+      'Drama': '8',
+      'Fantasy': '10',
+      'Girls Love': '26',
+      'Gourmet': '47',
+      'Horror': '14',
+      'Mystery': '7',
+      'Romance': '22',
+      'Sci-Fi': '24',
+      'Slice of Life': '36',
+      'Sports': '30',
+      'Supernatural': '37',
+      'Suspense': '41',
+    };
+
+    console.log("Selected Genre:", selectedGenreName)
+    console.log("Genre Number:", genreMap[selectedGenreName])
+    this.selectedGenreName = selectedGenreName;
+    this.selectedGenreNumber = genreMap[selectedGenreName];
   }
 
   onLogout(): void {
