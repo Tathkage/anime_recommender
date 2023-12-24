@@ -3,79 +3,99 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { AnimeService } from '../services/anime.service';
 import { AuthService } from '../services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog.component';
+
 
 interface Anime {
-  Title: string;
-  Rating: string;
-  Status: string;
-  'Episode Count': string;
-  'Episode Length': string;
-  'Release Year': string;
-  Description: string;
+	Title: string;
+	Rating: string;
+	Status: string;
+	'Episode Count': string;
+	'Episode Length': string;
+	'Release Year': string;
+	Description: string;
 }
 
-
 interface AnimeData {
-  'Anime Info': Anime[];
+  	'Anime Info': Anime[];
 }
 
 @Component({
-  selector: 'anime-list',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet],
-  templateUrl: './anime-list.component.html',
-  styleUrls: ['./anime-list.component.css']
+	selector: 'anime-list',
+	standalone: true,
+	imports: [CommonModule, RouterOutlet],
+	templateUrl: './anime-list.component.html',
+	styleUrls: ['./anime-list.component.css']
 })
 
 export class AnimeListComponent implements OnInit {
-  animeList: Anime[] = [];
-  selectedGenreNumber: string = "1"; // Default genre number is 1 for Action
-  selectedGenreName: string = "Action"; // Default genre is Action
+	animeList: Anime[] = [];
+	selectedGenreNumber: string = "1"; // Default genre number is 1 for Action
+	selectedGenreName: string = "Action"; // Default genre is Action
 
-  constructor(private animeService: AnimeService, private authService: AuthService, private router: Router) {}
+	selectedGenres: string[] = [];
 
-  ngOnInit(): void {}
+	constructor(private animeService: AnimeService,  private dialog: MatDialog, private authService: AuthService, private router: Router) {}
 
-  getAnimeList(): void {
-    this.animeService.getAnimeList(this.selectedGenreNumber, this.selectedGenreName).subscribe((data: AnimeData) => {
-      this.animeList = data['Anime Info'];
-    });
-  }
+	ngOnInit(): void {
+		
+	}
 
-  onGenreChange(selectedGenreName: string): void {
-    const genreMap: { [key: string]: string } = {
-      'Action': '1',
-      'Adventure': '2',
-      'Avant Garde': '5',
-      'Award Winning': '46',
-      'Boys Love': '28',
-      'Comedy': '4',
-      'Drama': '8',
-      'Fantasy': '10',
-      'Girls Love': '26',
-      'Gourmet': '47',
-      'Horror': '14',
-      'Mystery': '7',
-      'Romance': '22',
-      'Sci-Fi': '24',
-      'Slice of Life': '36',
-      'Sports': '30',
-      'Supernatural': '37',
-      'Suspense': '41',
-    };
+  	getAnimeList(): void {
+    	this.animeService.getAnimeList(this.selectedGenreNumber, this.selectedGenreName).subscribe((data: AnimeData) => {
+      	this.animeList = data['Anime Info'];
+    	});
+  	}
 
-    console.log("Selected Genre:", selectedGenreName)
-    console.log("Genre Number:", genreMap[selectedGenreName])
-    this.selectedGenreName = selectedGenreName;
-    this.selectedGenreNumber = genreMap[selectedGenreName];
-  }
+  	onGenreChange(selectedGenreName: string): void {
+		const genreMap: { [key: string]: string } = {
+			'Action': '1',
+			'Adventure': '2',
+			'Avant Garde': '5',
+			'Award Winning': '46',
+			'Boys Love': '28',
+			'Comedy': '4',
+			'Drama': '8',
+			'Fantasy': '10',
+			'Girls Love': '26',
+			'Gourmet': '47',
+			'Horror': '14',
+			'Mystery': '7',
+			'Romance': '22',
+			'Sci-Fi': '24',
+			'Slice of Life': '36',
+			'Sports': '30',
+			'Supernatural': '37',
+			'Suspense': '41',
+		};
 
-  onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/user-login']);
-  }
+		console.log("Selected Genre:", selectedGenreName)
+		console.log("Genre Number:", genreMap[selectedGenreName])
+		this.selectedGenreName = selectedGenreName;
+		this.selectedGenreNumber = genreMap[selectedGenreName];
+  	}
+	
+	openGenreSelectionDialog(): void {
+		const dialogRef = this.dialog.open(GenreSelectionDialogComponent, {
+			width: '250px',
+			data: { selectedGenres: this.selectedGenres }
+		});
+	
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.selectedGenres = result;  
+				console.log('Selected Genres:', this.selectedGenres);
+			}
+		});
+	  }
 
-  navigateToWatchlist(): void {
-    this.router.navigate(['/user-watchlist']);
-  }
+	onLogout(): void {
+		this.authService.logout();
+		this.router.navigate(['/user-login']);
+	}
+
+	navigateToWatchlist(): void {
+		this.router.navigate(['/user-watchlist']);
+	}
 }
