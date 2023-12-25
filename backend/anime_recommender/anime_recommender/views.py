@@ -1,13 +1,33 @@
 from django.http import JsonResponse, HttpResponse
-import anime_recommender.scraper.scraper as scraper
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+import anime_recommender.scraper.scraper as scraper
 import json
 
 async def runScraper(request, genre_number, genre_name):
     data = await scraper.topAnime(genre_number, genre_name)
+    return JsonResponse(data, safe=False)
+
+async def runGenreScraper(request):
+    genreNames = request.GET.getlist('genres')
+
+    if not genreNames:
+        return JsonResponse({"Anime Info": []})
+    
+    print(genreNames)
+    
+    genreUrls = await scraper.filterGenreUrls(genreNames)
+    
+    print(genreUrls)
+    
+    data = {}
+    
+    for genre, urlSuffix in genreUrls.items():
+        genreData = await scraper.genreScraper(urlSuffix)
+        data[genre] = genreData["Anime Info"]
+    
     return JsonResponse(data, safe=False)
 
 @csrf_exempt

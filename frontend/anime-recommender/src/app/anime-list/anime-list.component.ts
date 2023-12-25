@@ -18,7 +18,7 @@ interface Anime {
 }
 
 interface AnimeData {
-  	'Anime Info': Anime[];
+  	[key: string]: Anime[];
 }
 
 @Component({
@@ -42,11 +42,22 @@ export class AnimeListComponent implements OnInit {
 		
 	}
 
-  	getAnimeList(): void {
-    	this.animeService.getAnimeList(this.selectedGenreNumber, this.selectedGenreName).subscribe((data: AnimeData) => {
-      	this.animeList = data['Anime Info'];
-    	});
-  	}
+  	// getAnimeList(): void {
+    // 	this.animeService.getAnimeList(this.selectedGenreNumber, this.selectedGenreName).subscribe((data: AnimeData) => {
+    //   	this.animeList = data['Anime Info'];
+    // 	});
+  	// }
+
+	getAnimeList(): void {
+		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
+			this.animeList = [];
+			for (const genre of this.selectedGenres) {
+				if (data[genre]) {
+					this.animeList.push(...data[genre])
+				}
+			}
+		})
+	}
 
   	onGenreChange(selectedGenreName: string): void {
 		const genreMap: { [key: string]: string } = {
