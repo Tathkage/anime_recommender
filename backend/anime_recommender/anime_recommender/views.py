@@ -22,9 +22,19 @@ from decouple import config
 import anime_recommender.scraper.scraper as scraper
 
 
+################
+# Web Scrapers #
+################
+
+
 async def runScraper(request, genre_number, genre_name):
     data = await scraper.topAnime(genre_number, genre_name)
     return JsonResponse(data, safe=False)
+
+
+##################
+# User Endpoints #
+##################
 
 @csrf_exempt
 def register_user(request):
@@ -54,6 +64,11 @@ def login_user(request):
         return Response({'token': token.key})
     else:
         return Response({'error': 'Invalid Credentials'}, status=400)
+    
+
+#######################
+# Watchlist Endpoints #
+#######################
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -112,7 +127,7 @@ def update_watchlist(request, watchlist_id):
         port=config('DB_PORT', cast=int)
     )
     cursor = connection.cursor()
-    query = "UPDATE Watchlist SET watchlist_title = %s WHERE id = %s AND user_id = %s"
+    query = "UPDATE Watchlist SET watchlist_title = %s WHERE watchlist_id = %s AND user_id = %s"
     cursor.execute(query, (data['title'], watchlist_id, request.user.id))
     connection.commit()
     cursor.close()
@@ -132,9 +147,13 @@ def delete_watchlist(request, watchlist_id):
         port=config('DB_PORT', cast=int)
     )
     cursor = connection.cursor()
-    query = "DELETE FROM Watchlist WHERE id = %s AND user_id = %s"
+    query = "DELETE FROM Watchlist WHERE watchlist_id = %s AND user_id = %s"
     cursor.execute(query, (watchlist_id, request.user.id))
     connection.commit()
     cursor.close()
     connection.close()
     return HttpResponse(status=204)
+
+#############################
+# Anime-Watchlist Endpoints #
+#############################
