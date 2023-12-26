@@ -86,7 +86,7 @@ async def filterGenreUrls(genreNames):
     
     return filteredGenres
 
-async def genreScraper(urlSuffix):
+async def genreScraper(genre, urlSuffix):
     url = "https://myanimelist.net" + urlSuffix
     response = await scrapeWebsite(url)
     
@@ -133,8 +133,9 @@ async def genreScraper(urlSuffix):
                 "Status": statusTag,
                 "Episode Count": episodeCount,
                 "Episode Length": episodeLength,
-                "Description": animeDescription,
-                "Rating": animeRating
+                # "Description": animeDescription
+                "Rating": animeRating,
+                "Genre": [genre]
             })
             
             # print(f"Title: {animeTitle}, Release Year: {releaseYearTag}, Status: {statusTag}, Episode Count: {episodeCount}, Episode Length: {episodeLength}, Description: {animeDescription}, Rating: {animeRating}")

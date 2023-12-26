@@ -16,19 +16,26 @@ async def runGenreScraper(request):
     if not genreNames:
         return JsonResponse({"Anime Info": []})
     
-    print(genreNames)
-    
     genreUrls = await scraper.filterGenreUrls(genreNames)
     
-    print(genreUrls)
-    
-    data = {}
-    
+    data = []
     for genre, urlSuffix in genreUrls.items():
-        genreData = await scraper.genreScraper(urlSuffix)
-        data[genre] = genreData["Anime Info"]
+        genreData = await scraper.genreScraper(genre, urlSuffix)
+        for anime in genreData["Anime Info"]:
+            existingEntry = next((item for item in data if item["Title"] == anime["Title"]), None)
+            if existingEntry:
+                existingEntry["Genre"].extend(anime["Genre"])
+            else:
+                data.append(anime)
     
-    return JsonResponse(data, safe=False)
+    filteredData = [anime for anime in data if set(genreNames).issubset(set(anime["Genre"]))]
+    sortedData = sorted(filteredData, key=ratingSorter, reverse=True)
+    
+    return JsonResponse({"Anime Info": sortedData}, safe=False)
+
+def ratingSorter(anime):
+    rating = anime.get("Rating")
+    return float(rating) if rating and rating != "N/A" else -1
 
 @csrf_exempt
 def register_user(request):

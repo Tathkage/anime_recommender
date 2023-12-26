@@ -12,12 +12,6 @@ export class AnimeService {
 
 	constructor(private http: HttpClient) { }
 
-	// getAnimeList(genreNumber: string, genreName: string): Observable<any> {
-	// 	const url = `${this.apiUrl}${genreNumber}/${genreName}/`;
-	// 	console.log('URL:', url);
-	// 	return this.http.get(url);
-	// }
-
 	getAnimeList(genreNames: string[]): Observable<any> {
 		let params = new HttpParams();
 		genreNames.forEach(genre => {
