@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { WatchlistService } from '../services/watchlist.service';
+
+interface Watchlist {
+  watchlist_id: number;
+  watchlist_title: string;
+}
 
 @Component({
   selector: 'user-watchlist',
@@ -11,9 +17,17 @@ import { AuthService } from '../services/auth.service';
   styleUrl: './user-watchlist.component.css'
 })
 
-export class UserWatchlistComponent {
-  
-  constructor(private authService: AuthService, private router: Router) {}
+export class UserWatchlistComponent implements OnInit {
+  watchlists: Watchlist[] = [];
+  showCreatePopup = false;
+  showUpdatePopup = false;
+  selectedWatchlistId: number | null = null;
+
+  constructor(private watchlistService: WatchlistService, private authService: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    this.getWatchlists();
+  }
 
   onLogout(): void {
     this.authService.logout();
@@ -22,5 +36,43 @@ export class UserWatchlistComponent {
 
   navigateToAnimeList(): void {
     this.router.navigate(['/anime-list']);
+  }
+
+  createWatchlist(title: string): void {
+    this.watchlistService.createWatchlist(title).subscribe(() => {
+      this.getWatchlists();
+    });
+  }
+
+  getWatchlists(): void {
+    this.watchlistService.getWatchlists().subscribe(data => this.watchlists = data);
+  }
+
+  updateWatchlist(watchlistId: number | null, newTitle: string): void {
+    if (watchlistId !== null) {
+      this.watchlistService.updateWatchlist(watchlistId, newTitle).subscribe(() => this.getWatchlists());
+    }
+  }
+
+  deleteWatchlist(watchlistId: number): void {
+    if (confirm('Are you sure you want to delete this watchlist?')) {
+      this.watchlistService.deleteWatchlist(watchlistId).subscribe(() => this.getWatchlists());
+    }
+  }
+
+  showUpdateWatchlistPopup(watchlistId: number): void {
+    this.selectedWatchlistId = watchlistId;
+    this.showUpdatePopup = true;
+  }
+
+  confirmDeleteWatchlist(watchlistId: number): void {
+    const confirmed = confirm('Are you sure you want to delete this watchlist?');
+    if (confirmed) {
+      this.deleteWatchlist(watchlistId);
+    }
+  }
+
+  showCreateWatchlistPopup(): void {
+    this.showCreatePopup = true;
   }
 }

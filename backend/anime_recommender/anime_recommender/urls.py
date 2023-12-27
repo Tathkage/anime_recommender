@@ -16,11 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import anime_recommender.views as views
+from anime_recommender.views import (
+    runGenreScraper, 
+    register_user, 
+    create_watchlist, 
+    get_watchlists, 
+    update_watchlist, 
+    delete_watchlist,
+    login_user
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/genre-scraper/', views.runGenreScraper, name='runGenreScraper'),
-    path('api/signup/', views.register_user, name='register_user'),
-    path('api/login/', views.login_user, name='login_user')
+    path('api/genre-scraper/', runGenreScraper, name='runGenreScraper'),
+    path('api/signup/', register_user, name='register_user'),
+    path('api/login/', login_user, name='login_user'),
+    # Paths for watchlist operations
+    path('api/create_watchlist/', create_watchlist, name='create_watchlist'),
+    path('api/get_watchlists/', get_watchlists, name='get_watchlists'),
+    path('api/update_watchlist/<int:watchlist_id>/', update_watchlist, name='update_watchlist'),
+    path('api/delete_watchlist/<int:watchlist_id>/', delete_watchlist, name='delete_watchlist')
 ]
