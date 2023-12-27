@@ -176,6 +176,68 @@ def delete_watchlist(request, watchlist_id):
     connection.close()
     return HttpResponse(status=204)
 
+###################
+# Anime Endpoints #
+###################
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_or_create_anime(request):
+    data = json.loads(request.body)
+    connection = mysql.connector.connect(...)
+    cursor = connection.cursor(dictionary=True)
+
+    # Check if anime already exists
+    query = "SELECT anime_id FROM Anime WHERE title = %s"
+    cursor.execute(query, (data['title'],))
+    result = cursor.fetchone()
+
+    if result:
+        anime_id = result['anime_id']
+    else:
+        insert_query = """
+            INSERT INTO Anime (title, anime_status, ...)
+            VALUES (%s, %s, ...)
+        """
+        cursor.execute(insert_query, (...))
+        connection.commit()
+        anime_id = cursor.lastrowid
+
+    cursor.close()
+    connection.close()
+    return JsonResponse({'anime_id': anime_id})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_anime_to_database(request):
+    data = json.loads(request.body)
+    connection = mysql.connector.connect(host=config('DB_HOST'), database=config('DB_NAME'), user=config('DB_USER'), password=config('DB_PASSWORD'), port=config('DB_PORT', cast=int))
+    cursor = connection.cursor()
+    # Before inserting, check if the anime is in the database
+    anime_id = get_or_create_anime(request).json()['anime_id']
+    data = json.loads(request.body)
+    data['anime_id'] = anime_id  # Update anime_id in the data
+    query = """
+    INSERT INTO Anime (title, anime_status, episode_count, episode_length, release_year, rating, description, poster_image_url)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (data['title'], data['anime_status'], data['episode_count'], data['episode_length'], data['release_year'], data['rating'], data['description'], data['poster_image_url']))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return JsonResponse({'message': 'Anime added to database'})
+
 #############################
 # Anime-Watchlist Endpoints #
 #############################
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_anime_to_watchlist(request):
+    data = json.loads(request.body)
+    connection = mysql.connector.connect(host=config('DB_HOST'), database=config('DB_NAME'), user=config('DB_USER'), password=config('DB_PASSWORD'), port=config('DB_PORT', cast=int))
+    cursor = connection.cursor()
+    query = "INSERT INTO Anime_Watchlist (anime_id, watchlist_id) VALUES (%s, %s)"
+    cursor.execute(query, (data['anime_id'], data['watchlist_id']))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return JsonResponse({'message': 'Anime added to watchlist'})

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { AnimeService } from '../services/anime.service';
 import { AuthService } from '../services/auth.service';
+import { WatchlistService } from '../services/watchlist.service';
 import { MatDialog } from '@angular/material/dialog';
-import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog.component';
+import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
+import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
 
 
-interface Anime {
+export interface Anime {
 	Title: string;
 	Rating: string;
 	Status: string;
@@ -41,6 +43,7 @@ export class AnimeListComponent implements OnInit {
 		private animeService: AnimeService,
 		private dialog: MatDialog,
 		private authService: AuthService,
+		private watchlistService: WatchlistService,
 		private router: Router,
 		private renderer: Renderer2,
 		private el: ElementRef
@@ -87,6 +90,24 @@ export class AnimeListComponent implements OnInit {
 			}
 		});
 	  }
+
+	openAddToWatchlistDialog(anime: Anime): void {
+		const dialogRef = this.dialog.open(AddToWatchlistDialogComponent, {
+		  width: '400px',
+		  data: { anime }
+		});
+	
+		dialogRef.afterClosed().subscribe(result => {
+		  if (result) {
+			this.animeService.addAnimeToDatabase(anime).subscribe(animeResponse => {
+			  const animeId = animeResponse.anime_id;
+			  this.watchlistService.addAnimeToWatchlist(result.watchlistId, animeId).subscribe(response => {
+				console.log('Anime added to watchlist:', response.message);
+			  });
+			});
+		  }
+		});
+	}
 
 	onLogout(): void {
 		this.authService.logout();

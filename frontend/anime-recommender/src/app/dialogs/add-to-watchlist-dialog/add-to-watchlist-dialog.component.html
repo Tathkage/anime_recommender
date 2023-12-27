@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Add to Watchlist</h2>
+<mat-dialog-content>
+  <form [formGroup]="watchlistForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Select Watchlist</mat-label>
+      <mat-select formControlName="selectedWatchlist">
+        <mat-option *ngFor="let watchlist of watchlists" [value]="watchlist.watchlist_id">
+          {{ watchlist.watchlist_title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>New Watchlist</mat-label>
+      <input matInput formControlName="newWatchlist">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onAdd()" [disabled]="!watchlistForm.valid">Add</button>
+</mat-dialog-actions>
