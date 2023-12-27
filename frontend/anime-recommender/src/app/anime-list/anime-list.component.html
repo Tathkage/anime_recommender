@@ -1,47 +1,37 @@
 <button (click)="onLogout()">Logout</button>
 <button (click)="navigateToWatchlist()">Go to Watchlist</button>
+
 <div class="anime-list-container">
-  <div class="generate-button">
-    <button (click)="getAnimeList()">Generate</button>
-  </div>
+	<div class="generate-button">
+		<button (click)="getAnimeList()">Generate</button>
+	</div>
 
-  <select #genreSelect (change)="onGenreChange(genreSelect.value)">
-    <option value="Action">Action</option>
-    <option value="Adventure">Adventure</option>
-    <option value="Avant Garde">Avant Garde</option>
-    <option value="Award Winning">Award Winning</option>
-    <option value="Boys Love">Boys Love</option>
-    <option value="Comedy">Comedy</option>
-    <option value="Drama">Drama</option>
-    <option value="Fantasy">Fantasy</option>
-    <option value="Girls Love">Girls Love</option>
-    <option value="Gourmet">Gourmet</option>
-    <option value="Horror">Horror</option>
-    <option value="Mystery">Mystery</option>
-    <option value="Romance">Romance</option>
-    <option value="Sci-Fi">Sci-Fi</option>
-    <option value="Slice of Life">Slice of Life</option>
-    <option value="Sports">Sports</option>
-    <option value="Supernatural">Supernatural</option>
-    <option value="Suspense">Suspense</option>
-  </select>
-
+	<button (click)="openGenreSelectionDialog()">Select Genres</button>
   
-  <div class="anime-cards">
-    <div class="anime-card" *ngFor="let anime of animeList">
-      <div class="anime-header">
-        <h3>{{ anime.Title }}</h3>
-        <p>Rating: {{ anime.Rating }}</p>
-      </div>
-      <div class="anime-info">
-        <p><strong>Status:</strong> {{ anime.Status }}</p>
-        <p><strong>Episode Count:</strong> {{ anime['Episode Count'] }}</p>
-        <p><strong>Episode Length:</strong> {{ anime['Episode Length'] }} min</p>
-        <p><strong>Release Year:</strong> {{ anime['Release Year'] }}</p>
-      </div>
-      <div class="anime-description">
-        <p>{{ anime.Description }}</p>
-      </div>
-    </div>
-  </div>
+	<div class="pagination-info">
+		<p>Page {{ currentPage }} of {{ totalPages }}</p>
+	</div>
+
+	<div class="pagination-buttons">
+		<button (click)="previousPage()" [disabled]="currentPage === 1">&lt; Previous</button>
+		<button (click)="nextPage()" [disabled]="currentPage === totalPages">Next &gt;</button>
+	</div>
+
+	<div class="anime-cards">
+		<div class="anime-card" *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage">
+			<div class="anime-header">
+				<h3>{{ anime.Title }}</h3>
+				<p>Rating: {{ anime.Rating }}</p>
+			</div>
+			<div class="anime-info">
+				<p><strong>Status:</strong> {{ anime.Status }}</p>
+				<p><strong>Episode Count:</strong> {{ anime['Episode Count'] }}</p>
+				<p><strong>Episode Length:</strong> {{ anime['Episode Length'] }} min</p>
+				<p><strong>Release Year:</strong> {{ anime['Release Year'] }}</p>
+			</div>
+			<!-- <div class="anime-description">
+				<p>{{ anime.Description }}</p>
+			</div> -->
+		</div>
+	</div>
 </div>

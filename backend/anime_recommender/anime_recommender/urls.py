@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from anime_recommender.views import (
-    runScraper, 
+    runGenreScraper, 
     register_user, 
     create_watchlist, 
     get_watchlists, 
@@ -28,12 +28,12 @@ from anime_recommender.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/temp-scraper/<int:genre_number>/<str:genre_name>/', runScraper, name='runScraper'),
+    path('api/genre-scraper/', runGenreScraper, name='runGenreScraper'),
     path('api/signup/', register_user, name='register_user'),
     path('api/login/', login_user, name='login_user'),
     # Paths for watchlist operations
     path('api/create_watchlist/', create_watchlist, name='create_watchlist'),
     path('api/get_watchlists/', get_watchlists, name='get_watchlists'),
     path('api/update_watchlist/<int:watchlist_id>/', update_watchlist, name='update_watchlist'),
-    path('api/delete_watchlist/<int:watchlist_id>/', delete_watchlist, name='delete_watchlist'),
+    path('api/delete_watchlist/<int:watchlist_id>/', delete_watchlist, name='delete_watchlist')
 ]

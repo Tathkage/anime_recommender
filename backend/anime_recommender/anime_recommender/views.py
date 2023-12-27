@@ -26,10 +26,32 @@ import anime_recommender.scraper.scraper as scraper
 # Web Scrapers #
 ################
 
+async def runGenreScraper(request):
+    genreNames = request.GET.getlist('genres')
 
-async def runScraper(request, genre_number, genre_name):
-    data = await scraper.topAnime(genre_number, genre_name)
-    return JsonResponse(data, safe=False)
+    if not genreNames:
+        return JsonResponse({"Anime Info": []})
+    
+    genreUrls = await scraper.filterGenreUrls(genreNames)
+    
+    data = []
+    for genre, urlSuffix in genreUrls.items():
+        genreData = await scraper.genreScraper(genre, urlSuffix)
+        for anime in genreData["Anime Info"]:
+            existingEntry = next((item for item in data if item["Title"] == anime["Title"]), None)
+            if existingEntry:
+                existingEntry["Genre"].extend(anime["Genre"])
+            else:
+                data.append(anime)
+    
+    filteredData = [anime for anime in data if set(genreNames).issubset(set(anime["Genre"]))]
+    sortedData = sorted(filteredData, key=ratingSorter, reverse=True)
+    
+    return JsonResponse({"Anime Info": sortedData}, safe=False)
+
+def ratingSorter(anime):
+    rating = anime.get("Rating")
+    return float(rating) if rating and rating != "N/A" else -1
 
 
 ##################
