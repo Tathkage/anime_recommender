@@ -36,7 +36,6 @@ async def genreScraper(genre, urlSuffix):
     currentPage = 1
     
     while url:
-        # print(url)
         response = await scrapeWebsite(url)
         soup = BeautifulSoup(response.text, 'html.parser')
         
@@ -86,7 +85,6 @@ async def genreScraper(genre, urlSuffix):
                 })
             
         paginationLinks = soup.find_all("a", class_="link", href=True)
-        # print(pagination_links)
         nextUrl = None
 
         for link in paginationLinks:
@@ -97,6 +95,5 @@ async def genreScraper(genre, urlSuffix):
             
         currentPage+=1
         url = nextUrl if nextUrl else None
-        # print()
         
     return {"Anime Info": animeInfo}

@@ -8,8 +8,17 @@
 
 	<button (click)="openGenreSelectionDialog()">Select Genres</button>
   
+	<div class="pagination-info">
+		<p>Page {{ currentPage }} of {{ totalPages }}</p>
+	</div>
+
+	<div class="pagination-buttons">
+		<button (click)="previousPage()" [disabled]="currentPage === 1">&lt; Previous</button>
+		<button (click)="nextPage()" [disabled]="currentPage === totalPages">Next &gt;</button>
+	</div>
+
 	<div class="anime-cards">
-		<div class="anime-card" *ngFor="let anime of animeList">
+		<div class="anime-card" *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage">
 			<div class="anime-header">
 				<h3>{{ anime.Title }}</h3>
 				<p>Rating: {{ anime.Rating }}</p>
