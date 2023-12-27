@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { AnimeService } from '../services/anime.service';
@@ -35,20 +35,30 @@ export class AnimeListComponent implements OnInit {
 	currentPage: number = 1;
 	itemsPerPage: number = 100;
 	totalPages: number = 0;
+	isLoading: boolean = false;
 
-	constructor(private animeService: AnimeService,  private dialog: MatDialog, private authService: AuthService, private router: Router) {}
+	constructor(
+		private animeService: AnimeService,
+		private dialog: MatDialog,
+		private authService: AuthService,
+		private router: Router,
+		private renderer: Renderer2,
+		private el: ElementRef
+	  ) {}
 
 	ngOnInit(): void {
 		
 	}
 
 	getAnimeList(): void {
+		this.isLoading = true; // Start loading, show the spinner
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
-			this.animeList = data['Anime Info'];
-			this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
-			this.currentPage = 1;
-		})
-	}
+		  this.animeList = data['Anime Info'];
+		  this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
+		  this.currentPage = 1;
+		  this.isLoading = false; // Data loaded, hide the spinner
+		});
+	  }
 
 	nextPage(): void {
 		if (this.currentPage < this.totalPages) {

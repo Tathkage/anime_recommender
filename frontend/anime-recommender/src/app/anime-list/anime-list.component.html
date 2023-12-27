@@ -17,6 +17,12 @@
 		<button (click)="nextPage()" [disabled]="currentPage === totalPages">Next &gt;</button>
 	</div>
 
+	<!-- Add a loading spinner -->
+	<div class="loading-spinner" *ngIf="isLoading">
+		<div class="spinner"></div>
+		<p>Generating Watchlist...</p>
+	</div>	  
+
 	<div class="anime-cards">
 		<div class="anime-card" *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage">
 			<div class="anime-header">
