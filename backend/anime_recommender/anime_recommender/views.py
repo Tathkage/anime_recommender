@@ -241,3 +241,25 @@ def add_anime_to_watchlist(request):
     cursor.close()
     connection.close()
     return JsonResponse({'message': 'Anime added to watchlist'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_or_find_anime(request):
+    data = json.loads(request.body)
+    connection = mysql.connector.connect(host=config('DB_HOST'), database=config('DB_NAME'), user=config('DB_USER'), password=config('DB_PASSWORD'), port=config('DB_PORT', cast=int))
+    cursor = connection.cursor()
+    cursor.execute("SELECT anime_id FROM Anime WHERE anime_title = %s", (data['title'],))
+    anime = cursor.fetchone()
+    
+    if anime:
+        anime_id = anime['anime_id']
+    else:
+        insert_query = "INSERT INTO Anime (anime_title, release_year, num_episodes, time_per_episode, anime_rating, description, status) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (data['title'], data['releaseYear'], data['episodeCount'], data['episodeLength'], data['rating'], data['description'], data['status']))
+        connection.commit()
+        anime_id = cursor.lastrowid
+
+    cursor.close()
+    connection.close()
+    return JsonResponse({'anime_id': anime_id})
+

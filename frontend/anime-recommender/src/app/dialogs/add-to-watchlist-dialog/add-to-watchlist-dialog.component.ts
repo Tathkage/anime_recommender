@@ -1,4 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { WatchlistService } from '../../services/watchlist.service';
@@ -8,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AnimeService } from '../../services/anime.service';
 
 @Component({
   selector: 'app-add-to-watchlist-dialog',
@@ -15,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./add-to-watchlist-dialog.component.css'],
   standalone: true,
   imports: [
+    CommonModule,
     MatDialogModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -34,31 +37,41 @@ export class AddToWatchlistDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<AddToWatchlistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private watchlistService: WatchlistService
+    private watchlistService: WatchlistService,
+    private cdr: ChangeDetectorRef,
+    private animeService: AnimeService
   ) {}
 
   ngOnInit(): void {
     this.watchlistService.getWatchlists().subscribe(data => {
-      this.watchlists = data;
+        this.watchlists = data;
+        this.cdr.detectChanges();
+        console.log("Watchlists Loaded:", this.watchlists); // Debugging
+    }, error => {
+        console.error("Error loading watchlists:", error); // Error handling
     });
   }
 
   onAdd(): void {
-    if (this.watchlistForm.value.newWatchlist) {
-      // Create new watchlist and add anime to it
-      this.watchlistService.createWatchlist(this.watchlistForm.value.newWatchlist).subscribe(response => {
-        this.watchlistService.addAnimeToWatchlist(response.watchlist_id, this.data.anime.id).subscribe(() => {
-          this.dialogRef.close();
-        });
+    if (!this.data.anime.id) {
+      // Call a method to add/find the anime in the database and get its id
+      this.animeService.addOrFindAnime(this.data.anime).subscribe(animeResponse => {
+        this.addAnimeToWatchlist(animeResponse.anime_id);
       });
     } else {
-      // Add anime to existing watchlist
-      const selectedWatchlistId = Number(this.watchlistForm.value.selectedWatchlist); // Convert to number
-      this.watchlistService.addAnimeToWatchlist(selectedWatchlistId, this.data.anime.id).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.addAnimeToWatchlist(this.data.anime.id);
     }
   }
+  
+  private addAnimeToWatchlist(animeId: number): void {
+    const watchlistId = this.watchlistForm.value.newWatchlist
+      ? Number(this.watchlistForm.value.newWatchlist)
+      : Number(this.watchlistForm.value.selectedWatchlist);
+  
+    this.watchlistService.addAnimeToWatchlist(watchlistId, animeId).subscribe(() => {
+      this.dialogRef.close();
+    });
+  }  
 
   onCancel(): void {
     this.dialogRef.close();

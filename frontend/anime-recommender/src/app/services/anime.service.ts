@@ -8,7 +8,7 @@ import { Anime } from '../anime-list/anime-list.component';
 })
 
 export class AnimeService {
-	private apiUrl = 'http://localhost:8000/api/genre-scraper/';
+	private apiUrl = 'http://localhost:8000/api/';
 
 	constructor(private http: HttpClient) { }
 
@@ -25,12 +25,24 @@ export class AnimeService {
 		genreNames.forEach(genre => {
 			params = params.append('genres', genre);
 		});
-
-		console.log('URL:', this.apiUrl, 'Params:', params.toString());
-		return this.http.get(this.apiUrl, { params });
+		return this.http.get(`${this.apiUrl}genre-scraper/`, { params });
 	}
 
 	addAnimeToDatabase(anime: Anime): Observable<any> {
 		return this.http.post(`${this.apiUrl}get-or-create-anime/`, anime, { headers: this.getHeaders() });
 	}
+
+	addOrFindAnime(anime: any): Observable<any> {
+		const animeData = {
+			title: anime.Title,
+			releaseYear: anime['Release Year'],
+			episodeCount: anime['Episode Count'],
+			episodeLength: anime['Episode Length'],
+			rating: anime.Rating,
+			description: anime.Description,
+			status: anime.Status,
+		}
+		return this.http.post(`${this.apiUrl}add-or-find-anime/`, animeData, { headers: this.getHeaders() });
+	  }
+	  
 }
