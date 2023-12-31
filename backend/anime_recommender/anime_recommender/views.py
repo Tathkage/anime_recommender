@@ -111,10 +111,14 @@ def create_watchlist(request):
     query = "INSERT INTO Watchlist (user_id, watchlist_title) VALUES (%s, %s)"
     cursor.execute(query, (request.user.id, data['title']))
     connection.commit()
+
+    # Fetch the ID of the newly created watchlist
+    new_watchlist_id = cursor.lastrowid
+
     cursor.close()
     connection.close()
 
-    return JsonResponse({'message': 'Watchlist created'})
+    return JsonResponse({'watchlist_id': new_watchlist_id})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -252,7 +256,7 @@ def add_or_find_anime(request):
     anime = cursor.fetchone()
     
     if anime:
-        anime_id = anime['anime_id']
+        anime_id = anime[0]
     else:
         insert_query = "INSERT INTO Anime (anime_title, release_year, num_episodes, time_per_episode, anime_rating, description, status) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(insert_query, (data['title'], data['releaseYear'], data['episodeCount'], data['episodeLength'], data['rating'], data['description'], data['status']))

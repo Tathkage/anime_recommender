@@ -30,7 +30,7 @@ import { AnimeService } from '../../services/anime.service';
 export class AddToWatchlistDialogComponent implements OnInit {
   watchlists: any[] = [];
   watchlistForm = new FormGroup({
-    selectedWatchlist: new FormControl('', Validators.required),
+    selectedWatchlist: new FormControl(''),
     newWatchlist: new FormControl('')
   });
 
@@ -45,10 +45,26 @@ export class AddToWatchlistDialogComponent implements OnInit {
   ngOnInit(): void {
     this.watchlistService.getWatchlists().subscribe(data => {
         this.watchlists = data;
-        this.cdr.detectChanges();
         console.log("Watchlists Loaded:", this.watchlists); // Debugging
     }, error => {
         console.error("Error loading watchlists:", error); // Error handling
+    });
+
+    // Add value change listener
+    this.watchlistForm.get('selectedWatchlist')!.valueChanges.subscribe(value => {
+      if (value) {
+        this.watchlistForm.get('newWatchlist')!.disable();
+      } else {
+        this.watchlistForm.get('newWatchlist')!.enable();
+      }
+    });
+
+    this.watchlistForm.get('newWatchlist')!.valueChanges.subscribe(value => {
+      if (value) {
+        this.watchlistForm.get('selectedWatchlist')!.disable();
+      } else {
+        this.watchlistForm.get('selectedWatchlist')!.enable();
+      }
     });
   }
 
@@ -64,13 +80,32 @@ export class AddToWatchlistDialogComponent implements OnInit {
   }
   
   private addAnimeToWatchlist(animeId: number): void {
-    const watchlistId = this.watchlistForm.value.newWatchlist
-      ? Number(this.watchlistForm.value.newWatchlist)
-      : Number(this.watchlistForm.value.selectedWatchlist);
+    console.log("Form Values:", this.watchlistForm.value);
   
-    this.watchlistService.addAnimeToWatchlist(watchlistId, animeId).subscribe(() => {
-      this.dialogRef.close();
-    });
+    // Check if a new watchlist title is provided
+    if (this.watchlistForm.value.newWatchlist) {
+      // Create a new watchlist first
+      this.watchlistService.createWatchlist(this.watchlistForm.value.newWatchlist).subscribe(newWatchlistResponse => {
+        // After the new watchlist is created, get its ID
+        const newWatchlistId = newWatchlistResponse.watchlist_id;
+  
+        console.log("New Watchlist ID:", newWatchlistId);
+  
+        // Now add the anime to the newly created watchlist
+        this.watchlistService.addAnimeToWatchlist(newWatchlistId, animeId).subscribe(() => {
+          this.dialogRef.close();
+        });
+      });
+    } else {
+      // Use the selected watchlist
+      const watchlistId = Number(this.watchlistForm.value.selectedWatchlist);
+      console.log("Selected Watchlist ID:", watchlistId);
+  
+      // Add the anime to the selected watchlist
+      this.watchlistService.addAnimeToWatchlist(watchlistId, animeId).subscribe(() => {
+        this.dialogRef.close();
+      });
+    }
   }  
 
   onCancel(): void {
