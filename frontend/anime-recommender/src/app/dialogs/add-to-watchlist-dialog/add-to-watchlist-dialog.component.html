@@ -4,6 +4,7 @@
     <mat-form-field appearance="fill">
       <mat-label>Select Watchlist</mat-label>
       <mat-select formControlName="selectedWatchlist">
+        <mat-option value="">None</mat-option> <!-- Add this line -->
         <mat-option *ngFor="let watchlist of watchlists" [value]="watchlist.watchlist_id">
             {{ watchlist.watchlist_title }}
         </mat-option>
