@@ -79,7 +79,7 @@ async def genreScraper(genre, urlSuffix):
                     "Status": statusTag,
                     "Episode Count": episodeCount,
                     "Episode Length": episodeLength,
-                    # "Description": animeDescription
+                    "Description": animeDescription,
                     "Rating": animeRating,
                     "Genre": [genre]
                 })

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ViewWatchlistDialogComponent } from '../dialogs/view-watchlist-dialog/view-watchlist-dialog.component';
 
 interface Watchlist {
   watchlist_id: number;
@@ -23,7 +25,12 @@ export class UserWatchlistComponent implements OnInit {
   showUpdatePopup = false;
   selectedWatchlistId: number | null = null;
 
-  constructor(private watchlistService: WatchlistService, private authService: AuthService, private router: Router) {}
+  constructor(
+    private watchlistService: WatchlistService, 
+    private authService: AuthService, 
+    private router: Router,
+    private dialog: MatDialog,
+    ) {}
 
   ngOnInit() {
     this.getWatchlists();
@@ -36,6 +43,15 @@ export class UserWatchlistComponent implements OnInit {
 
   navigateToAnimeList(): void {
     this.router.navigate(['/anime-list']);
+  }
+
+  viewWatchlist(watchlistId: number): void {
+    const dialogRef = this.dialog.open(ViewWatchlistDialogComponent, {
+      width: '400px',
+      data: { watchlistId: watchlistId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
   createWatchlist(title: string): void {

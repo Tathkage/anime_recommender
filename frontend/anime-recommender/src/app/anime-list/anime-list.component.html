@@ -17,6 +17,12 @@
 		<button (click)="nextPage()" [disabled]="currentPage === totalPages">Next &gt;</button>
 	</div>
 
+	<!-- Add a loading spinner -->
+	<div class="loading-spinner" *ngIf="isLoading">
+		<div class="spinner"></div>
+		<p>Generating Watchlist...</p>
+	</div>	  
+
 	<div class="anime-cards">
 		<div class="anime-card" *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage">
 			<div class="anime-header">
@@ -29,9 +35,17 @@
 				<p><strong>Episode Length:</strong> {{ anime['Episode Length'] }} min</p>
 				<p><strong>Release Year:</strong> {{ anime['Release Year'] }}</p>
 			</div>
-			<!-- <div class="anime-description">
+			<div class="anime-description">
 				<p>{{ anime.Description }}</p>
-			</div> -->
+			</div>
+			<div class="anime-info">
+				<p><strong>Status:</strong> {{ anime.Status }}</p>
+				<p><strong>Episode Count:</strong> {{ anime['Episode Count'] }}</p>
+				<p><strong>Episode Length:</strong> {{ anime['Episode Length'] }} min</p>
+				<p><strong>Release Year:</strong> {{ anime['Release Year'] }}</p>
+			</div>
+			<!-- Add "Add to Watchlist" button -->
+			<button (click)="openAddToWatchlistDialog(anime)">Add to Watchlist</button>
 		</div>
 	</div>
 </div>

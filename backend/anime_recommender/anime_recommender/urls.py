@@ -23,7 +23,13 @@ from anime_recommender.views import (
     get_watchlists, 
     update_watchlist, 
     delete_watchlist,
-    login_user
+    login_user,
+    add_anime_to_database,
+    add_anime_to_watchlist,
+    get_or_create_anime,
+    add_or_find_anime,
+    get_anime_by_watchlist,
+    delete_anime_from_watchlist,
 )
 
 urlpatterns = [
@@ -35,5 +41,11 @@ urlpatterns = [
     path('api/create_watchlist/', create_watchlist, name='create_watchlist'),
     path('api/get_watchlists/', get_watchlists, name='get_watchlists'),
     path('api/update_watchlist/<int:watchlist_id>/', update_watchlist, name='update_watchlist'),
-    path('api/delete_watchlist/<int:watchlist_id>/', delete_watchlist, name='delete_watchlist')
+    path('api/delete_watchlist/<int:watchlist_id>/', delete_watchlist, name='delete_watchlist'),
+    path('api/add-anime-to-database/', add_anime_to_database, name='add_anime_to_database'),
+    path('api/add-anime-to-watchlist/', add_anime_to_watchlist, name='add_anime_to_watchlist'),
+    path('api/get-or-create-anime/', get_or_create_anime, name='get_or_create_anime'),
+    path('api/add-or-find-anime/', add_or_find_anime, name='add_or_find_anime'),
+    path('api/get-anime-by-watchlist/<int:watchlist_id>/', get_anime_by_watchlist, name='get_anime_by_watchlist'),
+    path('api/delete-anime-from-watchlist/<int:anime_id>/<int:watchlist_id>/', delete_anime_from_watchlist, name='delete_anime_from_watchlist'),
 ]
