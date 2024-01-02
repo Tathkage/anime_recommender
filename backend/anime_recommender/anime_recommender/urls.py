@@ -28,6 +28,7 @@ from anime_recommender.views import (
     add_anime_to_watchlist,
     get_or_create_anime,
     add_or_find_anime,
+    get_anime_by_watchlist,
 )
 
 urlpatterns = [
@@ -44,4 +45,5 @@ urlpatterns = [
     path('api/add-anime-to-watchlist/', add_anime_to_watchlist, name='add_anime_to_watchlist'),
     path('api/get-or-create-anime/', get_or_create_anime, name='get_or_create_anime'),
     path('api/add-or-find-anime/', add_or_find_anime, name='add_or_find_anime'),
+    path('api/get-anime-by-watchlist/<int:watchlist_id>/', get_anime_by_watchlist, name='get_anime_by_watchlist'),
 ]

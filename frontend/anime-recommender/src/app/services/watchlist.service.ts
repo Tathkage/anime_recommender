@@ -37,4 +37,8 @@ export class WatchlistService {
   addAnimeToWatchlist(watchlistId: number, animeId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}add-anime-to-watchlist/`, { anime_id: animeId, watchlist_id: watchlistId }, { headers: this.getHeaders() });
   }
+
+  getAnimeByWatchlist(watchlistId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}get-anime-by-watchlist/${watchlistId}/`, { headers: this.getHeaders() });
+  }
 }

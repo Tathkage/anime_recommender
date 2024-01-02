@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Watchlist</h2>
+<mat-dialog-content>
+  <div *ngIf="animeList.length; else noAnime">
+    <ul>
+      <li *ngFor="let anime of animeList">
+        {{ anime.anime_title }}
+      </li>
+    </ul>
+  </div>
+  <ng-template #noAnime>
+    <p>No anime in this watchlist.</p>
+  </ng-template>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">Close</button>
+</mat-dialog-actions>
