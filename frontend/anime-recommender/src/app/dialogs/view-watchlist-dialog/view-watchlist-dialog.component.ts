@@ -34,6 +34,14 @@ export class ViewWatchlistDialogComponent implements OnInit {
     }
   }
 
+  deleteAnime(animeId: number): void {
+    this.watchlistService.deleteAnimeFromWatchlist(animeId, this.data.watchlistId).subscribe(() => {
+      this.animeList = this.animeList.filter(anime => anime.anime_id !== animeId);
+    }, error => {
+      console.error("Error deleting anime:", error);
+    });
+  }
+
   closeDialog(): void {
     this.dialogRef.close();
   }

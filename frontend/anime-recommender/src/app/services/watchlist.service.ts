@@ -41,4 +41,8 @@ export class WatchlistService {
   getAnimeByWatchlist(watchlistId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}get-anime-by-watchlist/${watchlistId}/`, { headers: this.getHeaders() });
   }
+
+  deleteAnimeFromWatchlist(animeId: number, watchlistId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}delete-anime-from-watchlist/${animeId}/${watchlistId}/`, { headers: this.getHeaders() });
+  }
 }

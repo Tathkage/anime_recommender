@@ -4,6 +4,7 @@
     <ul>
       <li *ngFor="let anime of animeList">
         {{ anime.anime_title }}
+        <button mat-button (click)="deleteAnime(anime.anime_id)">Delete</button>
       </li>
     </ul>
   </div>

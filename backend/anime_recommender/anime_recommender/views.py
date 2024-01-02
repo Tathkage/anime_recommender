@@ -332,3 +332,28 @@ def get_anime_by_watchlist(request, watchlist_id):
         if connection.is_connected():
             cursor.close()
             connection.close()
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@csrf_exempt
+def delete_anime_from_watchlist(request, watchlist_id, anime_id):
+    connection = create_db_connection()
+    if not connection:
+        return JsonResponse({'error': 'Database connection failed'}, status=500)
+
+    try:
+        cursor = connection.cursor()
+        query = "DELETE FROM Anime_Watchlist WHERE watchlist_id = %s AND anime_id = %s"
+        cursor.execute(query, (watchlist_id, anime_id))
+        connection.commit()
+        if cursor.rowcount == 0:
+            # No rows affected, possibly due to non-existent watchlist ID or anime ID
+            return JsonResponse({'error': 'No matching entry found in the watchlist'}, status=404)
+        return HttpResponse(status=204)
+    except mysql.connector.Error as err:
+        print("Error while deleting anime from watchlist:", err)  # Log the error for debugging
+        return JsonResponse({'error': 'Failed to delete anime from watchlist'}, status=500)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
