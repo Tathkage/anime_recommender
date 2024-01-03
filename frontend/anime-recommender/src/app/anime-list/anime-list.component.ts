@@ -53,6 +53,14 @@ export class AnimeListComponent implements OnInit {
 		
 	}
 
+	navigateToWatchlist(): void {
+		this.router.navigate(['/user-watchlist']);
+	}
+
+	navigateToUserSettings(): void {
+		this.router.navigate(['/user-settings']);
+	}
+
 	getAnimeList(): void {
 		this.isLoading = true; // Start loading, show the spinner
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
@@ -112,9 +120,5 @@ export class AnimeListComponent implements OnInit {
 	onLogout(): void {
 		this.authService.logout();
 		this.router.navigate(['/user-login']);
-	}
-
-	navigateToWatchlist(): void {
-		this.router.navigate(['/user-watchlist']);
 	}
 }

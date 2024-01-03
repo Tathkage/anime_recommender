@@ -1,0 +1,35 @@
+.user-settings {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.user-settings input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.user-settings button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer; /* Added for better user experience */
+}
+
+.user-settings button:hover {
+  background-color: #0056b3;
+}
+
+/* Specific style for the delete account button */
+.delete-account button {
+  background-color: red;
+}
+
+.delete-account button:hover {
+  background-color: darkred; /* Slightly darker on hover */
+}

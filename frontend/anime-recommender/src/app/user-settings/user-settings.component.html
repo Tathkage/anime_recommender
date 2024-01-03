@@ -1,0 +1,40 @@
+<button (click)="onLogout()">Logout</button>
+<button (click)="navigateToWatchlist()">Go to Watchlist</button>
+<button (click)="navigateToAnimeList()">Go to Animelist</button>
+<div class="user-settings">
+    <form [formGroup]="userForm" (ngSubmit)="updateUser()">
+      <!-- Change Email -->
+      <div class="settings-section">
+        <h2>Change Email</h2>
+        <label for="email">Email</label>
+        <input formControlName="email" id="email" type="email" />
+        <button type="submit">Submit</button>
+      </div>
+  
+      <!-- Change Username -->
+      <div class="settings-section">
+        <h2>Change Username</h2>
+        <label for="username">Username</label>
+        <input formControlName="username" id="username" type="text" />
+        <button type="submit">Submit</button>
+      </div>
+  
+      <!-- Change Password -->
+      <div class="settings-section">
+        <h2>Change Password</h2>
+        <label for="currentPassword">Current Password</label>
+        <input formControlName="currentPassword" id="currentPassword" type="password" />
+        <label for="newPassword">New Password</label>
+        <input formControlName="newPassword" id="newPassword" type="password" />
+        <label for="confirmPassword">Confirm New Password</label>
+        <input formControlName="confirmPassword" id="confirmPassword" type="password" />
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  
+    <!-- Delete Account -->
+    <div class="settings-section delete-account">
+      <button (click)="confirmDeleteUser()">Delete Account</button>
+    </div>
+  </div>
+  

@@ -6,6 +6,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import check_password, make_password
 
 # Django Rest Framework imports
 from rest_framework.authtoken.models import Token
@@ -73,7 +74,8 @@ def ratingSorter(anime):
 ##################
 # User Endpoints #
 ##################
-
+@api_view(['POST'])
+@permission_classes([AllowAny])
 @csrf_exempt
 def register_user(request):
     if request.method == 'POST':
@@ -102,7 +104,118 @@ def login_user(request):
         return Response({'token': token.key})
     else:
         return Response({'error': 'Invalid Credentials'}, status=400)
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    return Response({
+        'user_id': request.user.id,
+        'username': request.user.username,
+        'email': request.user.email
+    })
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@csrf_exempt
+def update_user(request):
+    user_id = request.user.id
+    data = json.loads(request.body)
+
+    username = data.get('username')
+    email = data.get('email')
+    current_password = data.get('currentPassword')
+    new_password = data.get('newPassword')
+
+    # Debug: Print received data
+    print("Received data:", data)
+
+    if not (username or email or new_password):
+        return JsonResponse({'error': 'No update information provided'}, status=400)
+
+    connection = create_db_connection()
+    if not connection:
+        return JsonResponse({'error': 'Database connection failed'}, status=500)
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        
+        update_fields = []
+        update_values = []
+
+        if new_password:
+            if not current_password:
+                return JsonResponse({'error': 'Current password is required to change password'}, status=400)
+            
+            cursor.execute("SELECT password FROM auth_user WHERE id = %s", (user_id,))
+            user_record = cursor.fetchone()
+
+            if not user_record or not check_password(current_password, user_record['password']):
+                return JsonResponse({'error': 'Current password is incorrect'}, status=401)
+
+            hashed_password = make_password(new_password)
+            update_fields.append("password = %s")
+            update_values.append(hashed_password)
+
+        if username:
+            update_fields.append("username = %s")
+            update_values.append(username)
+        if email:
+            update_fields.append("email = %s")
+            update_values.append(email)
+
+        update_query = "UPDATE auth_user SET " + ", ".join(update_fields) + " WHERE id = %s"
+        update_values.append(user_id)
+
+        # Debug: Print SQL query and values
+        print("SQL Query:", update_query)
+        print("Values:", update_values)
+
+        cursor.execute(update_query, tuple(update_values))
+        connection.commit()
+
+        # Debug: Print row count
+        print("Rows affected:", cursor.rowcount)
+
+        if cursor.rowcount == 0:
+            return JsonResponse({'error': 'User not found'}, status=404)
+
+        return JsonResponse({'message': 'User information successfully updated'})
+    except mysql.connector.Error as err:
+        return JsonResponse({'error': str(err)}, status=500)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_user(request, user_id):
+    # Check if the requested user ID matches the logged-in user's ID
+    if request.user.id != user_id:
+        return JsonResponse({'error': 'Unauthorized access'}, status=403)
+
+    connection = create_db_connection()
+    if not connection:
+        return JsonResponse({'error': 'Database connection failed'}, status=500)
+
+    try:
+        cursor = connection.cursor()
+        query = "DELETE FROM auth_user WHERE id = %s"
+        cursor.execute(query, (user_id,))
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            # No user found with the provided ID
+            return JsonResponse({'error': 'No user found with provided ID'}, status=404)
+
+        return JsonResponse({'message': 'User successfully deleted'})
+    except mysql.connector.Error as err:
+        return JsonResponse({'error': str(err)}, status=500)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
 
 #######################
 # Watchlist Endpoints #
@@ -151,7 +264,7 @@ def get_watchlists(request):
             cursor.close()  # Close the cursor after fetching results
             connection.close()
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 @csrf_exempt
 def update_watchlist(request, watchlist_id):

@@ -45,6 +45,10 @@ export class UserWatchlistComponent implements OnInit {
     this.router.navigate(['/anime-list']);
   }
 
+  navigateToUserSettings(): void {
+    this.router.navigate(['/user-settings']);
+  }
+
   viewWatchlist(watchlistId: number): void {
     const dialogRef = this.dialog.open(ViewWatchlistDialogComponent, {
       width: '400px',
