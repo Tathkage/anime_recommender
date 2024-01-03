@@ -19,11 +19,48 @@
 
 	<!-- Add a loading spinner -->
 	<div class="loading-spinner" *ngIf="isLoading">
-		<div class="spinner"></div>
-		<p>Generating Watchlist...</p>
+		<div class="spinner-container">
+			<div class="spinner"></div>
+			<p>Generating Watchlist...</p>
+		</div>
 	</div>	  
 
-	<div class="anime-cards">
+	<div>
+		<table class="anime-table">
+			<thead>
+				<tr>
+					<th class="title-col">Title and Description</th>
+					<th class="rating-col">Rating</th>
+					<th class="status-col">Status</th>
+					<th class="ep-count-col">Episode Count</th>
+					<th class="ep-length-col">Episode Length</th>
+					<th class="release-year-col">Release Year</th>
+					<th class="watchlist-col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage; let i = index">
+					<td>
+						<div class="anime-title">{{ anime.Title }}</div>
+						<div [ngClass]="{'anime-description': true, 'collapsed': !anime.isExpanded}">
+							{{ anime.isExpanded ? anime.Description : (anime.Description | slice:0:150) + '...' }}
+						</div>
+						<button *ngIf="anime.Description.length > 150" (click)="toggleDescription((currentPage-1)*itemsPerPage+i)">
+							{{ anime.isExpanded ? 'Read Less' : 'Read More' }}
+						</button>
+					</td>
+					<td>{{ anime.Rating }}</td>
+					<td>{{ anime.Status }}</td>
+					<td>{{ anime['Episode Count'] }}</td>
+					<td>{{ anime['Episode Length'] }} min</td>
+					<td>{{ anime['Release Year'] }}</td>
+					<td><button (click)="openAddToWatchlistDialog(anime)">Add to Watchlist</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!-- <div class="anime-cards">
 		<div class="anime-card" *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage">
 			<div class="anime-header">
 				<h3>{{ anime.Title }}</h3>
@@ -38,14 +75,8 @@
 			<div class="anime-description">
 				<p>{{ anime.Description }}</p>
 			</div>
-			<div class="anime-info">
-				<p><strong>Status:</strong> {{ anime.Status }}</p>
-				<p><strong>Episode Count:</strong> {{ anime['Episode Count'] }}</p>
-				<p><strong>Episode Length:</strong> {{ anime['Episode Length'] }} min</p>
-				<p><strong>Release Year:</strong> {{ anime['Release Year'] }}</p>
-			</div>
-			<!-- Add "Add to Watchlist" button -->
+			Add "Add to Watchlist" button
 			<button (click)="openAddToWatchlistDialog(anime)">Add to Watchlist</button>
 		</div>
-	</div>
+	</div> -->
 </div>

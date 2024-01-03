@@ -1,5 +1,6 @@
 /* Style for the container */
 .anime-list-container {
+	position: relative;
 	margin: 20px auto;
 	width: 80%;
 	max-width: 1000px;
@@ -72,16 +73,28 @@
   }
   
   /* Style for the anime description */
-  .anime-description {
-	color: #555; /* Dark gray description text color */
-  }
+  /* .anime-description {
+	color: #555; /* Dark gray description text color 
+  } */
 
   .loading-spinner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+  }
+
+  .spinner-container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
   }
   
   .spinner {
@@ -102,5 +115,99 @@
 
   .pagination-buttons button {
 	margin-right: 10px; /* Add margin to the right of the buttons for spacing */
+  }
+
+  .anime-table {
+	width: 100%;
+	/* border-collapse: collapse;
+	margin: 10px 0; */
+	table-layout: fixed;
+  }
+  
+  .anime-table th, .anime-table td {
+	border: 1px solid #ddd;
+	padding: 8px;
+	text-align: left;
+  }
+  
+  .anime-table th {
+	background-color: #007bff;
+	color: white;
+  }
+  
+  /* Zebra striping for rows */
+  .anime-table tr:nth-child(odd) {
+	background-color: #f2f2f2;
+  }
+  
+  .anime-table tr:hover {
+	background-color: #ddd;
+  }
+  
+  /* Style for the watchlist button within the table */
+  .anime-table td button {
+	background-color: #007bff;
+	color: white;
+	padding: 5px 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+  }
+  
+  .anime-table td button:hover {
+	background-color: #0056b3;
+  }
+
+  .title-col {
+	width: 60%; /* Adjust as needed */
+  }
+  
+  .rating-col {
+	width: 10%; /* Adjust as needed */
+  }
+  
+  .status-col {
+	width: 10%; /* Adjust as needed */
+  }
+  
+  .ep-count-col {
+	width: 10%; /* Adjust as needed */
+  }
+  
+  .ep-length-col {
+	width: 10%; /* Adjust as needed */
+  }
+  
+  .release-year-col {
+	width: 10%; /* Adjust as needed */
+  }
+  
+  .watchlist-col {
+	width: 10%; /* Adjust as needed */
+  }
+
+  .anime-title {
+	font-weight: bold;
+	font-size: 1.2rem; /* adjust as needed */
+	margin-bottom: 0.5rem; /* space between title and description */
+  }
+  
+  /* Style for the anime description within the table */
+  .anime-description {
+	font-size: 0.9rem; /* adjust as needed */
+	color: #555; /* Dark gray description text color */
+  }
+
+  .collapsed {
+	max-height: 6em; /* Adjust as needed */
+	overflow: hidden;
+  }
+  
+  /* Style the 'Read More/Less' button for better visibility */
+  .anime-table button {
+	/* existing styles */
+	display: block; /* Align button below the text */
+	margin: 5px 0; /* Spacing around the button */
   }
   

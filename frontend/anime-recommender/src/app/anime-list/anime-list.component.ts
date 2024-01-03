@@ -17,6 +17,7 @@ export interface Anime {
 	'Episode Length': string;
 	'Release Year': string;
 	Description: string;
+	isExpanded?: boolean;
 }
 
 interface AnimeData {
@@ -56,16 +57,34 @@ export class AnimeListComponent implements OnInit {
 	getAnimeList(): void {
 		this.isLoading = true; // Start loading, show the spinner
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
-		  this.animeList = data['Anime Info'];
-		  this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
-		  this.currentPage = 1;
-		  this.isLoading = false; // Data loaded, hide the spinner
+			this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
+			this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
+			this.currentPage = 1;
+			this.isLoading = false; // Data loaded, hide the spinner
 		});
-	  }
+	}
+
+	toggleDescription(index: number): void {
+		if (this.animeList[index].isExpanded === undefined) {
+			this.animeList[index].isExpanded = false;
+		}
+
+		this.animeList[index].isExpanded = !this.animeList[index].isExpanded;
+	}
+
+	resetDescriptions(): void{
+		this.animeList = this.animeList.map(anime => {
+			if (anime.isExpanded) {
+				return {...anime, isExpanded: false};
+			}
+			return anime;
+		})
+	}
 
 	nextPage(): void {
 		if (this.currentPage < this.totalPages) {
 			this.currentPage++;
+			this.resetDescriptions();
 			console.log('Current Page:', this.currentPage);
 		}
 	}
@@ -73,6 +92,7 @@ export class AnimeListComponent implements OnInit {
 	previousPage(): void {
 		if (this.currentPage > 1) {
 			this.currentPage--;
+			this.resetDescriptions();
 			console.log('Current Page:', this.currentPage);
 		}
 	}
