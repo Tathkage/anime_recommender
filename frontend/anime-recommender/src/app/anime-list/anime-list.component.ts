@@ -1,10 +1,11 @@
 import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms'
 import { AnimeService } from '../services/anime.service';
 import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
-import { MatDialog } from '@angular/material/dialog';
 import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
 import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
 
@@ -27,7 +28,7 @@ interface AnimeData {
 @Component({
 	selector: 'anime-list',
 	standalone: true,
-	imports: [CommonModule, RouterOutlet],
+	imports: [CommonModule, RouterOutlet, FormsModule],
 	templateUrl: './anime-list.component.html',
 	styleUrls: ['./anime-list.component.css']
 })
@@ -39,6 +40,7 @@ export class AnimeListComponent implements OnInit {
 	itemsPerPage: number = 100;
 	totalPages: number = 0;
 	isLoading: boolean = false;
+	useAPI: boolean = false;
 
 	constructor(
 		private animeService: AnimeService,
@@ -48,7 +50,7 @@ export class AnimeListComponent implements OnInit {
 		private router: Router,
 		private renderer: Renderer2,
 		private el: ElementRef
-	  ) {}
+	) {}
 
 	ngOnInit(): void {
 		

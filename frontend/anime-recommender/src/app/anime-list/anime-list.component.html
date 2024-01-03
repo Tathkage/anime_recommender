@@ -4,6 +4,12 @@
 <div class="anime-list-container">
 	<div class="generate-button">
 		<button (click)="getAnimeList()">Generate</button>
+		<span class="toggle-label">Use API</span>
+		<label class="toggle-switch">
+			<input type="checkbox" [(ngModel)]="useAPI">
+			<span class="slider round"></span>
+		</label>
+		<span class="toggle-label">Use Web Scraper</span>
 	</div>
 
 	<button (click)="openGenreSelectionDialog()">Select Genres</button>
