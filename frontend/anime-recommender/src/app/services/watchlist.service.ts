@@ -27,7 +27,7 @@ export class WatchlistService {
   }
 
   updateWatchlist(watchlistId: number, newTitle: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}update_watchlist/${watchlistId}/`, { title: newTitle }, { headers: this.getHeaders() });
+    return this.http.put(`${this.apiUrl}update_watchlist/${watchlistId}/`, { title: newTitle }, { headers: this.getHeaders() });
   }
 
   deleteWatchlist(watchlistId: number): Observable<any> {
