@@ -15,6 +15,7 @@ import { AuthService } from '../services/auth.service';
 export class UserLoginComponent {
   loginData = { username: '', password: '' };
   errorMessage ='Sorry bud, something went wrong.'
+  showPassword = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -34,5 +35,9 @@ export class UserLoginComponent {
 
   redirectToSignup(): void {
     this.router.navigate(['/user-signup']);
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

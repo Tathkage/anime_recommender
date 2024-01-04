@@ -16,6 +16,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class UserSettingsComponent {
   userForm: FormGroup;
   userId: number | null = null;
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -121,5 +124,17 @@ export class UserSettingsComponent {
     if (confirmation) {
       this.deleteUser();
     }
+  }
+
+  toggleCurrentPasswordVisibility(): void {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }
