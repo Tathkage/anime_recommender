@@ -6,10 +6,12 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:8000/api/'; // Ensure using HTTPS in production
+
   constructor(private http: HttpClient) {}
 
   login(userData: any) {
-    return this.http.post('http://localhost:8000/api/login/', userData).pipe(
+    return this.http.post(`${this.apiUrl}login/`, userData).pipe(
       tap((response: any) => {
         if (response.token) {
           localStorage.setItem('userToken', response.token);
@@ -27,6 +29,6 @@ export class AuthService {
   }
 
   signUp(userData: any) {
-    return this.http.post('http://localhost:8000/api/signup/', userData);
+    return this.http.post(`${this.apiUrl}signup/`, userData);
   }
 }
