@@ -6,10 +6,16 @@
   <table>
     <tr *ngFor="let watchlist of watchlists">
       <td>{{ watchlist.watchlist_title }}</td>
-      <td><button (click)="viewWatchlist(watchlist.watchlist_id)">View</button></td>
-      <td><button (click)="showUpdateWatchlistPopup(watchlist.watchlist_id)">Update</button></td>
-      <td><button (click)="confirmDeleteWatchlist(watchlist.watchlist_id)">Delete</button></td>
-    </tr>    
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="viewWatchlist(watchlist.watchlist_id)">View</button>
+      </td>
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="showUpdateWatchlistPopup(watchlist.watchlist_id)">Update</button>
+      </td>
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="confirmDeleteWatchlist(watchlist.watchlist_id)">Delete</button>
+      </td>
+    </tr>      
   </table>
 </div>
 <button (click)="showCreateWatchlistPopup()">Create Watchlist</button>

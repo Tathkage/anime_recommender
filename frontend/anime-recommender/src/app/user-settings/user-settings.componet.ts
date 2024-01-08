@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-user-settings',
@@ -15,7 +16,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class UserSettingsComponent {
   userForm: FormGroup;
-  userId: number | null = null;
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
@@ -36,9 +36,8 @@ export class UserSettingsComponent {
   }
 
   ngOnInit(): void {
-    this.userService.getCurrentUser().subscribe(user => {
-      this.userId = user.user_id; // Adjust according to your user object
-      // Set the form values
+    this.userService.getCurrentUser().subscribe((user: User) => {
+      // Set the form values using the fetched user data
       this.userForm.patchValue({
         username: user.username,
         email: user.email
@@ -47,9 +46,16 @@ export class UserSettingsComponent {
   }  
 
   onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/user-login']);
-  }
+    this.authService.logout().subscribe(
+      () => {
+        console.log('Logout successful');
+        this.router.navigate(['/user-login']);
+      },
+      error => {
+        console.error('Error during logout:', error);
+      }
+    );
+  }  
 
   navigateToWatchlist(): void {
     this.router.navigate(['/user-watchlist']);
@@ -68,8 +74,7 @@ export class UserSettingsComponent {
   }
 
   updateUser() {
-    console.log('Current User:', this.userId);
-    if (this.isFormValid() && this.userId !== null) {
+    if (this.isFormValid()) {
       this.userService.updateUser(this.userForm.value).subscribe(
         response => {
           console.log('User updated successfully', response);
@@ -100,24 +105,20 @@ export class UserSettingsComponent {
   }
   
   deleteUser() {
-    if (this.userId !== null) {
-      this.userService.deleteUser(this.userId).subscribe(
+    const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (confirmation) {
+      this.userService.deleteUser().subscribe(
         response => {
           console.log('User deleted successfully', response);
-          // Handle successful deletion here
           this.authService.logout();
-          this.router.navigate(['/']);
+          this.router.navigate(['/user-login']);
         },
         error => {
           console.error('Error deleting user', error);
-          // Handle error here
         }
       );
-    } else {
-      console.error('UserId is null');
-      // Handle the case where userId is null
     }
-  }
+  }  
   
   confirmDeleteUser() {
     const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');

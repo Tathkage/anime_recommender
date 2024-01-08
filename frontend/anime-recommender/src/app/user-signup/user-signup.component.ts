@@ -20,10 +20,14 @@ export class UserSignupComponent {
     constructor(private authService: AuthService, private router: Router) {}
 
     ngOnInit(): void {
-      if (this.authService.isLoggedIn()) {
-        this.router.navigate(['/anime-list']);
-      }
+      this.authService.isLoggedIn().subscribe(isLoggedIn => {
+        if (isLoggedIn) {
+          // Redirect to anime list if the user is already logged in
+          this.router.navigate(['/anime-list']);
+        }
+      });
     }
+      
 
     onSignUp(): void {
         this.authService.signUp(this.signupData).subscribe(result => {

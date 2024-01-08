@@ -29,85 +29,98 @@ import { AnimeService } from '../../services/anime.service';
 
 export class AddToWatchlistDialogComponent implements OnInit {
   watchlists: any[] = [];
-  watchlistForm = new FormGroup({
-    selectedWatchlist: new FormControl(''),
-    newWatchlist: new FormControl('')
-  });
+  watchlistForm: FormGroup;
 
   constructor(
     private dialogRef: MatDialogRef<AddToWatchlistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private watchlistService: WatchlistService,
-    private cdr: ChangeDetectorRef,
-    private animeService: AnimeService
-  ) {}
+    private animeService: AnimeService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.watchlistForm = new FormGroup({
+      selectedWatchlist: new FormControl(''),
+      newWatchlist: new FormControl('')
+    });
+  }
 
   ngOnInit(): void {
-    this.watchlistService.getWatchlists().subscribe(data => {
+    this.loadWatchlists();
+    this.setupFormValueChanges();
+  }
+
+  // Load watchlists from the service
+  private loadWatchlists(): void {
+    this.watchlistService.getWatchlists().subscribe(
+      data => {
         this.watchlists = data;
-        console.log("Watchlists Loaded:", this.watchlists); // Debugging
-    }, error => {
-        console.error("Error loading watchlists:", error); // Error handling
+      },
+      error => console.error("Error loading watchlists:", error)
+    );
+  }
+
+  // Setup form value changes listeners
+  private setupFormValueChanges(): void {
+    this.watchlistForm.get('selectedWatchlist')?.valueChanges.subscribe(value => {
+      this.toggleFormFields('newWatchlist', value);
     });
 
-    // Add value change listener
-    this.watchlistForm.get('selectedWatchlist')!.valueChanges.subscribe(value => {
-      if (value) {
-        this.watchlistForm.get('newWatchlist')!.disable();
-      } else {
-        this.watchlistForm.get('newWatchlist')!.enable();
-      }
-    });
-
-    this.watchlistForm.get('newWatchlist')!.valueChanges.subscribe(value => {
-      if (value) {
-        this.watchlistForm.get('selectedWatchlist')!.disable();
-      } else {
-        this.watchlistForm.get('selectedWatchlist')!.enable();
-      }
+    this.watchlistForm.get('newWatchlist')?.valueChanges.subscribe(value => {
+      this.toggleFormFields('selectedWatchlist', value);
     });
   }
 
+  // Toggle form fields based on the current value
+  private toggleFormFields(fieldToDisable: string, condition: any): void {
+    const control = this.watchlistForm.get(fieldToDisable);
+    condition ? control?.disable() : control?.enable();
+  }
+
+  // Add Anime to Watchlist
   onAdd(): void {
-    if (!this.data.anime.id) {
-      // Call a method to add/find the anime in the database and get its id
-      this.animeService.addOrFindAnime(this.data.anime).subscribe(animeResponse => {
-        this.addAnimeToWatchlist(animeResponse.anime_id);
-      });
+    const animeId = this.data.anime.id;
+    if (!animeId) {
+      this.animeService.addOrFindAnime(this.data.anime).subscribe(
+        response => this.processAnimeAddition(response.anime_id),
+        error => console.error("Error adding or finding anime:", error)
+      );
     } else {
-      this.addAnimeToWatchlist(this.data.anime.id);
+      this.processAnimeAddition(animeId);
     }
   }
-  
-  private addAnimeToWatchlist(animeId: number): void {
-    console.log("Form Values:", this.watchlistForm.value);
-  
-    // Check if a new watchlist title is provided
-    if (this.watchlistForm.value.newWatchlist) {
-      // Create a new watchlist first
-      this.watchlistService.createWatchlist(this.watchlistForm.value.newWatchlist).subscribe(newWatchlistResponse => {
-        // After the new watchlist is created, get its ID
-        const newWatchlistId = newWatchlistResponse.watchlist_id;
-  
-        console.log("New Watchlist ID:", newWatchlistId);
-  
-        // Now add the anime to the newly created watchlist
-        this.watchlistService.addAnimeToWatchlist(newWatchlistId, animeId).subscribe(() => {
-          this.dialogRef.close();
-        });
-      });
-    } else {
-      // Use the selected watchlist
-      const watchlistId = Number(this.watchlistForm.value.selectedWatchlist);
-      console.log("Selected Watchlist ID:", watchlistId);
-  
-      // Add the anime to the selected watchlist
-      this.watchlistService.addAnimeToWatchlist(watchlistId, animeId).subscribe(() => {
-        this.dialogRef.close();
-      });
-    }
-  }  
 
+  // Process the addition of Anime to a Watchlist
+  private processAnimeAddition(animeId: number): void {
+    if (this.watchlistForm.value.newWatchlist) {
+      this.createWatchlistAndAddAnime(animeId);
+    } else {
+      this.addAnimeToExistingWatchlist(animeId);
+    }
+  }
+
+  // Create a new Watchlist and add Anime to it
+  private createWatchlistAndAddAnime(animeId: number): void {
+    this.watchlistService.createWatchlist(this.watchlistForm.value.newWatchlist).subscribe(
+      response => this.addAnimeToWatchlist(response.id, animeId),
+      error => console.error("Error creating watchlist:", error)
+    );
+  }
+
+  // Add Anime to an existing Watchlist
+  private addAnimeToExistingWatchlist(animeId: number): void {
+    const watchlistId = this.watchlistForm.value.selectedWatchlist;
+    this.addAnimeToWatchlist(watchlistId, animeId);
+  }
+
+  // Add Anime to a Watchlist
+  private addAnimeToWatchlist(watchlistId: number, animeId: number): void {
+    this.watchlistService.addAnimeToWatchlist(watchlistId, animeId).subscribe(
+      () => this.dialogRef.close(),
+      error => console.error("Error adding anime to watchlist:", error)
+    );
+  }
+
+  // Close the dialog
   onCancel(): void {
     this.dialogRef.close();
   }

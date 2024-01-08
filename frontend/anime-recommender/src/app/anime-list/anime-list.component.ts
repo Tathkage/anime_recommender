@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,22 +8,7 @@ import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
 import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
 import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
-
-
-export interface Anime {
-	Title: string;
-	Rating: string;
-	Status: string;
-	'Episode Count': string;
-	'Episode Length': string;
-	'Release Year': string;
-	Description: string;
-	isExpanded?: boolean;
-}
-
-interface AnimeData {
-  	'Anime Info': Anime[];
-}
+import { Anime, AnimeData } from '../models/anime.model';
 
 @Component({
 	selector: 'anime-list',
@@ -47,10 +32,8 @@ export class AnimeListComponent implements OnInit {
 		private dialog: MatDialog,
 		private authService: AuthService,
 		private watchlistService: WatchlistService,
-		private router: Router,
-		private renderer: Renderer2,
-		private el: ElementRef
-	) {}
+		private router: Router
+	  ) {}
 
 	ngOnInit(): void {
 		
@@ -65,14 +48,15 @@ export class AnimeListComponent implements OnInit {
 	}
 
 	getAnimeList(): void {
-		this.isLoading = true; // Start loading, show the spinner
+		this.isLoading = true;
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
-			this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
-			this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
-			this.currentPage = 1;
-			this.isLoading = false; // Data loaded, hide the spinner
+		  console.log(data); // Add this line to inspect the data structure
+		  this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
+		  this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
+		  this.currentPage = 1;
+		  this.isLoading = false;
 		});
-	}
+	}	  
 
 	toggleDescription(index: number): void {
 		if (this.animeList[index].isExpanded === undefined) {
@@ -121,18 +105,29 @@ export class AnimeListComponent implements OnInit {
 		});
 	  }
 
-	openAddToWatchlistDialog(anime: Anime): void {
+	openAddToWatchlistDialog(selectedAnime: Anime): void {
 		const dialogRef = this.dialog.open(AddToWatchlistDialogComponent, {
-		  width: '400px',
-		  data: { anime }
-		});
+			width: '400px',
+			data: { anime: selectedAnime }
+		  });
 	
 		dialogRef.afterClosed().subscribe(result => {
 		  if (result) {
-			this.animeService.addAnimeToDatabase(anime).subscribe(animeResponse => {
+
+			const animeToSave: Anime = {
+				Title: selectedAnime.Title,
+				Rating: selectedAnime.Rating,
+				Status: selectedAnime.Status,
+				'Episode Count': selectedAnime['Episode Count'],
+				'Episode Length': selectedAnime['Episode Length'],
+				'Release Year': selectedAnime['Release Year'],
+				Description: selectedAnime.Description
+			  };
+
+			this.animeService.addAnimeToDatabase(animeToSave).subscribe(animeResponse => {
 			  const animeId = animeResponse.anime_id;
 			  this.watchlistService.addAnimeToWatchlist(result.watchlistId, animeId).subscribe(response => {
-				console.log('Anime added to watchlist:', response.message);
+				console.log('Anime added to watchlist');
 			  });
 			});
 		  }
@@ -140,7 +135,14 @@ export class AnimeListComponent implements OnInit {
 	}
 
 	onLogout(): void {
-		this.authService.logout();
-		this.router.navigate(['/user-login']);
-	}
+		this.authService.logout().subscribe(
+		  () => {
+			console.log('Logout successful');
+			this.router.navigate(['/user-login']);
+		  },
+		  error => {
+			console.error('Error during logout:', error);
+		  }
+		);
+	  }	  
 }
