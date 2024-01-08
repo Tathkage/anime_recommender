@@ -63,9 +63,9 @@ export class AnimeService {
     const isTitleValid = typeof anime.Title === 'string' && anime.Title.trim() !== '';
     const isRatingValid = typeof anime.Rating === 'string' && anime.Rating.trim() !== '';
     const isStatusValid = typeof anime.Status === 'string' && anime.Status.trim() !== '';
-    const isEpisodeCountValid = typeof anime.EpisodeCount === 'number' && !isNaN(anime.EpisodeCount);
-    const isEpisodeLengthValid = typeof anime.EpisodeLength === 'number' && !isNaN(anime.EpisodeLength);
-    const isReleaseYearValid = typeof anime.ReleaseYear === 'number' && !isNaN(anime.ReleaseYear);
+    const isEpisodeCountValid = typeof anime['Episode Count'] === 'number' && !isNaN(anime['Episode Count']);
+    const isEpisodeLengthValid = typeof anime['Episode Length'] === 'number' && !isNaN(anime['Episode Length']);
+    const isReleaseYearValid = typeof anime['Release Year'] === 'number' && !isNaN(anime['Release Year']);
     const isDescriptionValid = typeof anime.Description === 'string';
   
     // Return true only if all conditions are true
@@ -77,9 +77,9 @@ export class AnimeService {
   private mapAnimeToData(anime: any): any {
     return {
       anime_title: anime.Title,
-      release_year: anime.ReleaseYear,
-      num_episodes: anime.EpisodeCount,
-      time_per_episode: anime.EpisodeLength,
+      release_year: anime['Release Year'],
+      num_episodes: anime['Episode Count'],
+      time_per_episode: anime['Episode Length'],
       anime_rating: anime.Rating,
       description: anime.Description,
       status: anime.Status,

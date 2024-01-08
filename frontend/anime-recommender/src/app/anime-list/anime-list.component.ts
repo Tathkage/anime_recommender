@@ -48,14 +48,15 @@ export class AnimeListComponent implements OnInit {
 	}
 
 	getAnimeList(): void {
-		this.isLoading = true; // Start loading, show the spinner
+		this.isLoading = true;
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
-			this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
-			this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
-			this.currentPage = 1;
-			this.isLoading = false; // Data loaded, hide the spinner
+		  console.log(data); // Add this line to inspect the data structure
+		  this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
+		  this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
+		  this.currentPage = 1;
+		  this.isLoading = false;
 		});
-	}
+	}	  
 
 	toggleDescription(index: number): void {
 		if (this.animeList[index].isExpanded === undefined) {
@@ -117,9 +118,9 @@ export class AnimeListComponent implements OnInit {
 				Title: selectedAnime.Title,
 				Rating: selectedAnime.Rating,
 				Status: selectedAnime.Status,
-				EpisodeCount: selectedAnime['EpisodeCount'],
-				EpisodeLength: selectedAnime['EpisodeLength'],
-				ReleaseYear: selectedAnime['ReleaseYear'],
+				'Episode Count': selectedAnime['Episode Count'],
+				'Episode Length': selectedAnime['Episode Length'],
+				'Release Year': selectedAnime['Release Year'],
 				Description: selectedAnime.Description
 			  };
 

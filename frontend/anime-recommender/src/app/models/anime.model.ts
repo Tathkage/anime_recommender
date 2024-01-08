@@ -2,10 +2,11 @@ export interface Anime {
     Title: string;
     Rating: string;
     Status: string;
-    EpisodeCount: number;
-    EpisodeLength: number;
-    ReleaseYear: number;
+    'Episode Count': number;
+    'Episode Length': number;
+    'Release Year': number;
     Description: string;
+    isExpanded?: boolean;
 }
   
 export interface AnimeData {
