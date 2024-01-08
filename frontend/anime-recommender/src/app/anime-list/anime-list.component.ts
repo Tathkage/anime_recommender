@@ -1,10 +1,11 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms'
 import { AnimeService } from '../services/anime.service';
 import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
-import { MatDialog } from '@angular/material/dialog';
 import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
 import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
 import { Anime, AnimeData } from '../models/anime.model';
@@ -12,7 +13,7 @@ import { Anime, AnimeData } from '../models/anime.model';
 @Component({
 	selector: 'anime-list',
 	standalone: true,
-	imports: [CommonModule, RouterOutlet],
+	imports: [CommonModule, RouterOutlet, FormsModule],
 	templateUrl: './anime-list.component.html',
 	styleUrls: ['./anime-list.component.css']
 })
@@ -24,6 +25,7 @@ export class AnimeListComponent implements OnInit {
 	itemsPerPage: number = 100;
 	totalPages: number = 0;
 	isLoading: boolean = false;
+	useAPI: boolean = false;
 
 	constructor(
 		private animeService: AnimeService,
@@ -48,16 +50,34 @@ export class AnimeListComponent implements OnInit {
 	getAnimeList(): void {
 		this.isLoading = true; // Start loading, show the spinner
 		this.animeService.getAnimeList(this.selectedGenres).subscribe((data: AnimeData) => {
-		  this.animeList = data['Anime Info'];
-		  this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
-		  this.currentPage = 1;
-		  this.isLoading = false; // Data loaded, hide the spinner
+			this.animeList = data['Anime Info'].map(anime => ({...anime, isExpanded: false}));
+			this.totalPages = Math.ceil(this.animeList.length / this.itemsPerPage);
+			this.currentPage = 1;
+			this.isLoading = false; // Data loaded, hide the spinner
 		});
-	  }
+	}
+
+	toggleDescription(index: number): void {
+		if (this.animeList[index].isExpanded === undefined) {
+			this.animeList[index].isExpanded = false;
+		}
+
+		this.animeList[index].isExpanded = !this.animeList[index].isExpanded;
+	}
+
+	resetDescriptions(): void{
+		this.animeList = this.animeList.map(anime => {
+			if (anime.isExpanded) {
+				return {...anime, isExpanded: false};
+			}
+			return anime;
+		})
+	}
 
 	nextPage(): void {
 		if (this.currentPage < this.totalPages) {
 			this.currentPage++;
+			this.resetDescriptions();
 			console.log('Current Page:', this.currentPage);
 		}
 	}
@@ -65,6 +85,7 @@ export class AnimeListComponent implements OnInit {
 	previousPage(): void {
 		if (this.currentPage > 1) {
 			this.currentPage--;
+			this.resetDescriptions();
 			console.log('Current Page:', this.currentPage);
 		}
 	}
