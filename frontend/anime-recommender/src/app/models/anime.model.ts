@@ -6,9 +6,9 @@ export interface Anime {
     EpisodeLength: number;
     ReleaseYear: number;
     Description: string;
-  }
+}
   
-  export interface AnimeData {
+export interface AnimeData {
     'Anime Info': Anime[];
-  }
+}
   
