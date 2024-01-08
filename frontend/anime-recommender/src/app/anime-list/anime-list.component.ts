@@ -7,21 +7,7 @@ import { WatchlistService } from '../services/watchlist.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
 import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
-
-
-export interface Anime {
-	Title: string;
-	Rating: string;
-	Status: string;
-	'Episode Count': string;
-	'Episode Length': string;
-	'Release Year': string;
-	Description: string;
-}
-
-interface AnimeData {
-  	'Anime Info': Anime[];
-}
+import { Anime, AnimeData } from '../models/anime.model';
 
 @Component({
 	selector: 'anime-list',
@@ -97,18 +83,29 @@ export class AnimeListComponent implements OnInit {
 		});
 	  }
 
-	openAddToWatchlistDialog(anime: Anime): void {
+	openAddToWatchlistDialog(selectedAnime: Anime): void {
 		const dialogRef = this.dialog.open(AddToWatchlistDialogComponent, {
-		  width: '400px',
-		  data: { anime }
-		});
+			width: '400px',
+			data: { anime: selectedAnime }
+		  });
 	
 		dialogRef.afterClosed().subscribe(result => {
 		  if (result) {
-			this.animeService.addAnimeToDatabase(anime).subscribe(animeResponse => {
+
+			const animeToSave: Anime = {
+				Title: selectedAnime.Title,
+				Rating: selectedAnime.Rating,
+				Status: selectedAnime.Status,
+				EpisodeCount: selectedAnime['EpisodeCount'],
+				EpisodeLength: selectedAnime['EpisodeLength'],
+				ReleaseYear: selectedAnime['ReleaseYear'],
+				Description: selectedAnime.Description
+			  };
+
+			this.animeService.addAnimeToDatabase(animeToSave).subscribe(animeResponse => {
 			  const animeId = animeResponse.anime_id;
 			  this.watchlistService.addAnimeToWatchlist(result.watchlistId, animeId).subscribe(response => {
-				console.log('Anime added to watchlist:', response.message);
+				console.log('Anime added to watchlist');
 			  });
 			});
 		  }

@@ -1,39 +1,25 @@
+// user.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { User, UpdateUserData } from '../models/user.model'; // Assuming these interfaces are defined
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8000/api/'; // Ensure using HTTPS in production
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error has occurred';
-    if (error.error instanceof ErrorEvent) {
-      // Client-side or network error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // The backend returned an unsuccessful response code
-      if (error.status === 0) {
-        errorMessage = 'Cannot connect to API';
-      } else {
-        errorMessage = `Error ${error.status}: ${error.statusText}`;
-      }
-    }
-    console.error(errorMessage);
-    return throwError(errorMessage);
-  }
-
-  getCurrentUser(): Observable<any> {
-    return this.http.get(`${this.apiUrl}get-current-user/`, { withCredentials: true })
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}get-current-user/`, { withCredentials: true })
       .pipe(catchError(this.handleError));
   }  
 
-  updateUser(userData: any): Observable<any> {
+  updateUser(userData: UpdateUserData): Observable<any> {
     return this.http.put(`${this.apiUrl}update-user/`, userData, { withCredentials: true })
       .pipe(catchError(this.handleError));
   }
@@ -41,5 +27,17 @@ export class UserService {
   deleteUser(): Observable<any> {
     return this.http.delete(`${this.apiUrl}delete-user/`, { withCredentials: true })
       .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error has occurred';
+    // Customize error messages here based on error.status or error.error
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Error ${error.status}: ${error.statusText}`;
+    }
+    console.error(errorMessage);
+    return throwError(errorMessage);
   }
 }

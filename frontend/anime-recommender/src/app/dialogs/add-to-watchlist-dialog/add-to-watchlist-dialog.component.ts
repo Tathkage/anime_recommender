@@ -91,10 +91,11 @@ export class AddToWatchlistDialogComponent implements OnInit {
   
         console.log("New Watchlist ID:", newWatchlistId);
   
-        // Now add the anime to the newly created watchlist
-        this.watchlistService.addAnimeToWatchlist(newWatchlistId, animeId).subscribe(() => {
-          this.dialogRef.close();
-        });
+        if (typeof newWatchlistId === 'number') {
+          this.watchlistService.addAnimeToWatchlist(newWatchlistId, animeId).subscribe(() => {
+            this.dialogRef.close();
+          });
+        }        
       });
     } else {
       // Use the selected watchlist

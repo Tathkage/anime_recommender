@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Anime } from '../anime-list/anime-list.component';
+import { Anime } from '../models/anime.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnimeService {
-  private apiUrl = 'http://localhost:8000/api/';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -29,6 +30,22 @@ export class AnimeService {
     return throwError(errorMessage);
   }
 
+  private isValidAnime(anime: Anime): boolean {
+    // Check all required fields for validity
+    const isTitleValid = typeof anime.Title === 'string' && anime.Title.trim() !== '';
+    const isRatingValid = typeof anime.Rating === 'string' && anime.Rating.trim() !== '';
+    const isStatusValid = typeof anime.Status === 'string' && anime.Status.trim() !== '';
+    const isEpisodeCountValid = typeof anime.EpisodeCount === 'number' && !isNaN(anime.EpisodeCount);
+    const isEpisodeLengthValid = typeof anime.EpisodeLength === 'number' && !isNaN(anime.EpisodeLength);
+    const isReleaseYearValid = typeof anime.ReleaseYear === 'number' && !isNaN(anime.ReleaseYear);
+    const isDescriptionValid = typeof anime.Description === 'string';
+  
+    // Return true only if all conditions are true
+    return isTitleValid && isRatingValid && isStatusValid && 
+           isEpisodeCountValid && isEpisodeLengthValid && 
+           isReleaseYearValid && isDescriptionValid;
+  }  
+
   getAnimeList(genreNames: string[]): Observable<any> {
     let params = new HttpParams();
     genreNames.forEach(genre => {
@@ -39,16 +56,22 @@ export class AnimeService {
   }
 
   addAnimeToDatabase(anime: Anime): Observable<any> {
+    if (!this.isValidAnime(anime)) {
+      return throwError('Invalid anime data');
+    }
     return this.http.post(`${this.apiUrl}get-or-create-anime/`, anime, { withCredentials: true })
       .pipe(catchError(this.handleError));
   }  
 
   addOrFindAnime(anime: any): Observable<any> {
+    if (!this.isValidAnime(anime)) {
+      return throwError('Invalid anime data');
+    }
     const animeData = {
       anime_title: anime.Title,
-      release_year: anime['Release Year'],
-      num_episodes: anime['Episode Count'],
-      time_per_episode: anime['Episode Length'],
+      release_year: anime.ReleaseYear,
+      num_episodes: anime.EpisodeCount,
+      time_per_episode: anime.EpisodeLength,
       anime_rating: anime.Rating,
       description: anime.Description,
       status: anime.Status,

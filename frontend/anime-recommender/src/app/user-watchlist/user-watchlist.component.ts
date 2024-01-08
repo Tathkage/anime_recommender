@@ -5,11 +5,8 @@ import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ViewWatchlistDialogComponent } from '../dialogs/view-watchlist-dialog/view-watchlist-dialog.component';
+import { Watchlist } from '../models/watchlist.model';
 
-interface Watchlist {
-  watchlist_id: number;
-  watchlist_title: string;
-}
 
 @Component({
   selector: 'user-watchlist',

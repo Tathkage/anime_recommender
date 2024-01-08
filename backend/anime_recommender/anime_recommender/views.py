@@ -11,9 +11,10 @@ from django.core.exceptions import ValidationError
 # Django Rest Framework imports
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 # Local application imports
 from .models import Anime, Watchlist, AnimeWatchlist
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 ################
 # Web Scrapers #
 ################
-
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 async def runGenreScraper(request):
     genreNames = request.GET.getlist('genres')
 
@@ -60,6 +61,7 @@ def ratingSorter(anime):
 ############################
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def register_user(request):
     if request.method == 'POST':
         try:
@@ -85,6 +87,7 @@ def verify_session(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def login_user(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -99,6 +102,7 @@ def login_user(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def logout_user(request):
     response = Response({'detail': 'Logout Successful'})
     response.delete_cookie('auth_token')
@@ -129,6 +133,7 @@ def get_current_user(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def update_user(request):
     user = request.user
     data = json.loads(request.body)
@@ -163,6 +168,7 @@ def update_user(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def delete_user(request):
     user = request.user
     try:
@@ -188,6 +194,7 @@ def delete_user(request):
 #######################
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def create_watchlist(request):
     try:
         data = json.loads(request.body)
@@ -282,6 +289,7 @@ def get_or_create_anime(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
 def add_anime_to_database(request):
     try:
         data = json.loads(request.body)

@@ -149,7 +149,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'anime_recommender.authentication.CookieTokenAuthentication',
-    ]
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',  # Example: 100 requests per day for anonymous users
+        'user': '1000/day'  # Example: 1000 requests per day for logged-in users
+    }
 }
 
 # INTERNATIONALIZATION AND LOCALIZATION SETTINGS
