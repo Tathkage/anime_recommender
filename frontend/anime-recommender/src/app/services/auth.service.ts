@@ -1,6 +1,5 @@
-// auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -15,19 +14,17 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  // Handles user login
   login(userData: UserLoginData): Observable<any> {
     return this.http.post(`${this.apiUrl}login/`, userData, {
       withCredentials: true
     }).pipe(
-      tap((response: any) => {
-        if (response.detail === 'Login Successful') {
-          this.isAuthenticatedSubject.next(true);
-        }
-      }),
+      tap(response => this.handleAuthenticationResponse(response)),
       catchError(this.handleError)
     );
   }
 
+  // Handles user logout
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}logout/`, {}, {
       withCredentials: true
@@ -37,26 +34,56 @@ export class AuthService {
     );
   }
 
+  // Checks if the user is logged in
   isLoggedIn(): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}verify-session/`, { withCredentials: true }).pipe(
-      tap((loggedIn: boolean) => this.isAuthenticatedSubject.next(loggedIn)),
+      tap(loggedIn => this.isAuthenticatedSubject.next(loggedIn)),
       catchError(this.handleError)
     );
   }
 
+  // Handles user registration
   signUp(userData: UserSignupData): Observable<any> {
     return this.http.post(`${this.apiUrl}signup/`, userData, {
       withCredentials: true
     }).pipe(catchError(this.handleError));
   }
 
+  // Returns the authentication state as an observable
   isAuthenticated(): Observable<boolean> {
     return this.isAuthenticatedSubject.asObservable();
   }
 
-  private handleError(error: any) {
-    // Handle the error here
-    // Optionally, re-throw the error after handling
-    return throwError(error);
+  // Private method to handle authentication response
+  private handleAuthenticationResponse(response: any) {
+    if (response.detail === 'Login Successful') {
+      this.isAuthenticatedSubject.next(true);
+    }
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let userFriendlyMessage = 'An unknown error occurred. Please try again later.';
+  
+    // Network or client-side error
+    if (error.error instanceof ErrorEvent) {
+      console.error('Client-side error:', error.error.message);
+      userFriendlyMessage = `A client-side error occurred: ${error.error.message}`;
+    } 
+    // Backend returned an unsuccessful response code
+    else {
+      console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
+  
+      // Customize user-friendly messages for specific status codes
+      if (error.status === 0) {
+        userFriendlyMessage = 'Cannot connect to the server. Please check your network connection.';
+      } else if (error.status === 401) {
+        userFriendlyMessage = 'Unauthorized request. Please login again.';
+      } else if (error.status === 404) {
+        userFriendlyMessage = 'Requested resource not found.';
+      } // Add more status codes as needed
+    }
+  
+    // Return an observable with a user-facing error message
+    return throwError(userFriendlyMessage);
   }
 }

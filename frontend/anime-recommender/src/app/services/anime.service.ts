@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Anime } from '../models/anime.model';
@@ -13,6 +13,34 @@ export class AnimeService {
 
   constructor(private http: HttpClient) { }
 
+  // Public methods for HTTP requests
+  getAnimeList(genreNames: string[]): Observable<any> {
+    let params = new HttpParams();
+    genreNames.forEach(genre => {
+      params = params.append('genres', genre);
+    });
+    return this.http.get(`${this.apiUrl}genre-scraper/`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  addAnimeToDatabase(anime: Anime): Observable<any> {
+    if (!this.isValidAnime(anime)) {
+      return throwError('Invalid anime data');
+    }
+    return this.http.post(`${this.apiUrl}get-or-create-anime/`, anime, { withCredentials: true })
+      .pipe(catchError(this.handleError));
+  }
+
+  addOrFindAnime(anime: any): Observable<any> {
+    if (!this.isValidAnime(anime)) {
+      return throwError('Invalid anime data');
+    }
+    const animeData = this.mapAnimeToData(anime);
+    return this.http.post(`${this.apiUrl}add-or-find-anime/`, animeData, { withCredentials: true })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Private utility methods
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error has occurred';
     if (error.error instanceof ErrorEvent) {
@@ -44,30 +72,10 @@ export class AnimeService {
     return isTitleValid && isRatingValid && isStatusValid && 
            isEpisodeCountValid && isEpisodeLengthValid && 
            isReleaseYearValid && isDescriptionValid;
-  }  
-
-  getAnimeList(genreNames: string[]): Observable<any> {
-    let params = new HttpParams();
-    genreNames.forEach(genre => {
-      params = params.append('genres', genre);
-    });
-    return this.http.get(`${this.apiUrl}genre-scraper/`, { params })
-      .pipe(catchError(this.handleError));
   }
 
-  addAnimeToDatabase(anime: Anime): Observable<any> {
-    if (!this.isValidAnime(anime)) {
-      return throwError('Invalid anime data');
-    }
-    return this.http.post(`${this.apiUrl}get-or-create-anime/`, anime, { withCredentials: true })
-      .pipe(catchError(this.handleError));
-  }  
-
-  addOrFindAnime(anime: any): Observable<any> {
-    if (!this.isValidAnime(anime)) {
-      return throwError('Invalid anime data');
-    }
-    const animeData = {
+  private mapAnimeToData(anime: any): any {
+    return {
       anime_title: anime.Title,
       release_year: anime.ReleaseYear,
       num_episodes: anime.EpisodeCount,
@@ -76,7 +84,5 @@ export class AnimeService {
       description: anime.Description,
       status: anime.Status,
     };
-    return this.http.post(`${this.apiUrl}add-or-find-anime/`, animeData, { withCredentials: true })
-      .pipe(catchError(this.handleError));
   }
 }
