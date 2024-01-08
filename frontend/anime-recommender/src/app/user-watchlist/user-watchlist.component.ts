@@ -37,8 +37,15 @@ export class UserWatchlistComponent implements OnInit {
   }
 
   onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/user-login']);
+    this.authService.logout().subscribe(
+      () => {
+        console.log('Logout successful');
+        this.router.navigate(['/user-login']);
+      },
+      error => {
+        console.error('Error during logout:', error);
+      }
+    );
   }
 
   navigateToAnimeList(): void {

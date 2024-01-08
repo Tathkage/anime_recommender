@@ -47,9 +47,16 @@ export class UserSettingsComponent {
   }  
 
   onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/user-login']);
-  }
+    this.authService.logout().subscribe(
+      () => {
+        console.log('Logout successful');
+        this.router.navigate(['/user-login']);
+      },
+      error => {
+        console.error('Error during logout:', error);
+      }
+    );
+  }  
 
   navigateToWatchlist(): void {
     this.router.navigate(['/user-watchlist']);
@@ -100,24 +107,20 @@ export class UserSettingsComponent {
   }
   
   deleteUser() {
-    if (this.userId !== null) {
-      this.userService.deleteUser(this.userId).subscribe(
+    const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (confirmation) {
+      this.userService.deleteUser().subscribe(
         response => {
           console.log('User deleted successfully', response);
-          // Handle successful deletion here
           this.authService.logout();
-          this.router.navigate(['/']);
+          this.router.navigate(['/user-login']);
         },
         error => {
           console.error('Error deleting user', error);
-          // Handle error here
         }
       );
-    } else {
-      console.error('UserId is null');
-      // Handle the case where userId is null
     }
-  }
+  }  
   
   confirmDeleteUser() {
     const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');

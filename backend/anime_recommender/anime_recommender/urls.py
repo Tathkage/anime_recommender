@@ -8,6 +8,7 @@ from anime_recommender.views import (
     update_watchlist, 
     delete_watchlist,
     login_user,
+    logout_user,
     add_anime_to_database,
     add_anime_to_watchlist,
     get_or_create_anime,
@@ -17,6 +18,7 @@ from anime_recommender.views import (
     delete_user,
     update_user,
     get_current_user,
+    verify_session
 )
 
 urlpatterns = [
@@ -26,9 +28,11 @@ urlpatterns = [
     # User authentication routes
     path('api/signup/', register_user, name='register_user'),
     path('api/login/', login_user, name='login_user'),
-    path('api/delete-user/<int:user_id>/', delete_user, name='delete_user'),
+    path('api/logout/', logout_user, name='logout_user'),
+    path('api/delete-user/', delete_user, name='delete_user'),
     path('api/update-user/', update_user, name='update_user'),
     path('api/get-current-user/', get_current_user, name='get_current_user'),
+    path('api/verify-session/', verify_session, name='verify_session'),
 
     # Watchlist related routes
     path('api/create_watchlist/', create_watchlist, name='create_watchlist'),

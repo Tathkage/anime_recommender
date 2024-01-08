@@ -1,49 +1,26 @@
 # Standard library imports
 import json
+import logging
 
 # Django imports
 from django.http import JsonResponse, HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import check_password, make_password
-from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 
 # Django Rest Framework imports
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-
-# Third-party imports
-import mysql.connector
-from decouple import config
-import logging
 
 # Local application imports
+from .models import Anime, Watchlist, AnimeWatchlist
 import anime_recommender.scraper.scraper as scraper
-from .models import Anime, Watchlist, AnimeWatchlist  # Adjust the import path based on your project structure
 
+# Logger
 logger = logging.getLogger(__name__)
-
-
-#######################
-# Database Connection #
-#######################
-def create_db_connection():
-    try:
-        return mysql.connector.connect(
-            host=config('DB_HOST'),
-            database=config('DB_NAME'),
-            user=config('DB_USER'),
-            password=config('DB_PASSWORD'),
-            port=config('DB_PORT', cast=int)
-        )
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return None
         
 
 ################
@@ -78,9 +55,9 @@ def ratingSorter(anime):
     return float(rating) if rating and rating != "N/A" else -1
 
 
-##################
-# User Endpoints #
-##################
+############################
+# Authentication Endpoints #
+############################
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_user(request):
@@ -100,31 +77,37 @@ def register_user(request):
     else:
         return HttpResponse("Method not allowed", status=405)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def verify_session(request):
+    # If the request reaches here, the user is authenticated
+    return Response({'authenticated': True})
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_user(request):
-    try:
-        data = request.data
-        username = data.get('username')
-        password = data.get('password')
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        token, _ = Token.objects.get_or_create(user=user)
+        response = Response({'detail': 'Login Successful'})
+        response.set_cookie(key='auth_token', value=token.key, httponly=True, samesite='Lax')
+        return response
+    else:
+        return Response({'error': 'Invalid credentials'}, status=400)
 
-        # Basic input validation can be added here if necessary
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def logout_user(request):
+    response = Response({'detail': 'Logout Successful'})
+    response.delete_cookie('auth_token')
+    return response
 
-        user = authenticate(username=username, password=password)
 
-        if user is not None:
-            # Generate or retrieve a token
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key})
-        else:
-            # Return a generic error message
-            return Response({'error': 'Invalid login credentials'}, status=400)
-    except Exception as e:
-        # Log the exception for internal monitoring
-        print(f"Login Error: {e}")
-        # Return a generic error response
-        return Response({'error': 'An error occurred during login'}, status=500)
-
+##################
+# User Endpoints #
+##################
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
@@ -180,25 +163,21 @@ def update_user(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_user(request, user_id):
-    # Ensure that the user ID is an integer
+def delete_user(request):
+    user = request.user
     try:
-        user_id = int(user_id)
-    except ValueError:
-        return JsonResponse({'error': 'Invalid user ID format'}, status=400)
+        # Delete the user's authentication token
+        Token.objects.filter(user=user).delete()
 
-    # Check if the requested user ID matches the logged-in user's ID
-    if request.user.id != user_id:
-        # Return a generic unauthorized error message
-        return JsonResponse({'error': 'Unauthorized access'}, status=403)
-
-    try:
-        user = User.objects.get(id=user_id)
+        # Now delete the user
         user.delete()
-        return JsonResponse({'message': 'User successfully deleted'})
 
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+        # Create a response for successful deletion
+        response = Response({'message': 'User successfully deleted'})
+        # Delete the authentication cookie as part of the response
+        response.delete_cookie('auth_token')
+        return response
+
     except Exception as e:
         logger.error(f"Delete User Error: {e}")
         return JsonResponse({'error': 'Internal server error'}, status=500)
@@ -306,7 +285,7 @@ def get_or_create_anime(request):
 def add_anime_to_database(request):
     try:
         data = json.loads(request.body)
-        required_fields = ['title', 'anime_status', 'episode_count', 'episode_length', 'release_year', 'rating', 'description', 'poster_image_url']
+        required_fields = ['anime_title', 'status', 'num_episodes', 'time_per_episode', 'release_year', 'anime_rating', 'description',]
         if not all(field in data for field in required_fields):
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
@@ -362,17 +341,17 @@ def add_or_find_anime(request):
     try:
         data = json.loads(request.body)
         # Validate inputs
-        if 'title' not in data or 'releaseYear' not in data:
+        if 'anime_title' not in data or 'release_year' not in data:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
 
         # Using Django ORM for database interactions
         anime, created = Anime.objects.get_or_create(
-            title=data['title'],
+            anime_title=data['anime_title'],
             defaults={
-                'release_year': data['releaseYear'],
-                'num_episodes': data['episodeCount'],
-                'time_per_episode': data['episodeLength'],
-                'anime_rating': data['rating'],
+                'release_year': data['release_year'],
+                'num_episodes': data['num_episodes'],
+                'time_per_episode': data['time_per_episode'],
+                'anime_rating': data['anime_rating'],
                 'description': data['description'],
                 'status': data['status']
             }
@@ -396,44 +375,15 @@ def get_anime_by_watchlist(request, watchlist_id):
     if not str(watchlist_id).isdigit():
         return JsonResponse({'error': 'Invalid watchlist ID'}, status=400)
 
-    # Use Django ORM for secure queries (if possible)
     try:
-        # Assuming Anime and Anime_Watchlist are Django models
-        anime_list = Anime.objects.filter(anime_watchlist__watchlist_id=watchlist_id).values()
+        # Retrieve Anime ids from AnimeWatchlist for the given watchlist_id
+        anime_ids = AnimeWatchlist.objects.filter(watchlist_id=watchlist_id).values_list('anime_id', flat=True)
+
+        # Now retrieve Anime objects using the ids from above
+        anime_list = Anime.objects.filter(anime_id__in=anime_ids).values()
         return JsonResponse(list(anime_list), safe=False)
     except Exception as e:
         # Log the exception internally for review
         print(f"Error in get_anime_by_watchlist: {e}")
         return JsonResponse({'error': 'An error occurred while fetching anime list'}, status=500)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_anime_from_watchlist(request, watchlist_id, anime_id):
-    # Validate inputs (example validation, adjust according to your needs)
-    if not isinstance(watchlist_id, int) or not isinstance(anime_id, int):
-        return JsonResponse({'error': 'Invalid input'}, status=400)
-
-    connection = create_db_connection()
-    if not connection:
-        # Log this error internally instead of printing
-        # Log error: Database connection failed
-        return JsonResponse({'error': 'Server error. Please try again later.'}, status=500)
-
-    try:
-        cursor = connection.cursor()
-        query = "DELETE FROM Anime_Watchlist WHERE watchlist_id = %s AND anime_id = %s"
-        cursor.execute(query, (watchlist_id, anime_id))
-        connection.commit()
-
-        if cursor.rowcount == 0:
-            return JsonResponse({'error': 'No matching entry found in the watchlist'}, status=404)
-
-        return HttpResponse(status=204)
-    except mysql.connector.Error as err:
-        # Log the detailed error for internal review
-        # Log error: Error while deleting anime from watchlist
-        return JsonResponse({'error': 'Server error. Please try again later.'}, status=500)
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()

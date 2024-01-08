@@ -30,8 +30,11 @@ SECURE_HSTS_PRELOAD = False
 SECURE_SSL_REDIRECT = False
 
 # Secure Cookie
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = True  # Use with HTTPS
+SESSION_COOKIE_SAMESITE = 'None' # For cross-site cookie sharing
+SESSION_COOKIE_SECURE = True  # Use with HTTPS
 
 
 # # settings.py for production
@@ -79,6 +82,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Allow credentials (cookies)
+CORS_ALLOW_CREDENTIALS = True
 
 # Cross-Origin Resource Sharing settings
 CORS_ALLOWED_ORIGINS = [
@@ -142,6 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'anime_recommender.authentication.CookieTokenAuthentication',
     ]
 }
 

@@ -44,9 +44,7 @@ export class AnimeListComponent implements OnInit {
 		private dialog: MatDialog,
 		private authService: AuthService,
 		private watchlistService: WatchlistService,
-		private router: Router,
-		private renderer: Renderer2,
-		private el: ElementRef
+		private router: Router
 	  ) {}
 
 	ngOnInit(): void {
@@ -118,7 +116,14 @@ export class AnimeListComponent implements OnInit {
 	}
 
 	onLogout(): void {
-		this.authService.logout();
-		this.router.navigate(['/user-login']);
-	}
+		this.authService.logout().subscribe(
+		  () => {
+			console.log('Logout successful');
+			this.router.navigate(['/user-login']);
+		  },
+		  error => {
+			console.error('Error during logout:', error);
+		  }
+		);
+	  }	  
 }
