@@ -79,20 +79,18 @@ export class UserSettingsComponent {
       this.userService.updateUser(this.userForm.value).subscribe(
         response => {
           console.log('User updated successfully', response);
-          // Handle successful update here
+          this.errorMessage = ''; // Clear error message on successful update
         },
         error => {
           console.error('Error updating user', error);
-          // Display error message to the user
-          // Assuming you have a mechanism to show this, like `errorMessage`
-          this.errorMessage = error;
-      }
+          this.errorMessage = error; // Display error message
+        }
       );
     } else {
-      console.error('Form is invalid or userId is null');
-      // Handle the case where the form is invalid or userId is null
+      console.error('Form is invalid');
+      this.errorMessage = 'Form is invalid. Please check your inputs.'; // Display form validation error
     }
-  }
+  }  
 
   isFormValid() {
     const form = this.userForm;

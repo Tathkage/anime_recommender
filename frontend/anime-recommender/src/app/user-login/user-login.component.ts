@@ -14,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 
 export class UserLoginComponent {
   loginData = { username: '', password: '' };
-  errorMessage ='Sorry bud, something went wrong.'
+  errorMessage = '';
   showPassword = false;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -26,12 +26,16 @@ export class UserLoginComponent {
   }
 
   onLogin(): void {
-    this.authService.login(this.loginData).subscribe(result => {
-      this.router.navigate(['/anime-list']); // Redirect on success
-    }, error => {
-      this.errorMessage = 'Login failed: Incorrect username or password.'; // Display error message
-    });
-  }
+    this.authService.login(this.loginData).subscribe(
+      result => {
+        this.router.navigate(['/anime-list']); // Redirect on success
+        this.errorMessage = ''; // Clear error message
+      },
+      error => {
+        this.errorMessage = error; // Display error message
+      }
+    );
+  }  
 
   redirectToSignup(): void {
     this.router.navigate(['/user-signup']);

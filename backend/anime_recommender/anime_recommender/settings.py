@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    # 'defender',
     # Your apps
     'anime_recommender',
 ]
@@ -81,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'defender.middleware.FailedLoginMiddleware',
 ]
 
 # Allow credentials (cookies)
@@ -144,6 +146,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
 ]
+
+# Defender Settings
+DEFENDER_REDIS_URL = "redis://localhost:6379/0"
+DEFENDER_STORE_ACCESS_ATTEMPTS = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'defender': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
 
 # REST FRAMEWORK SETTINGS
 # ------------------------------------------------------------------------------
