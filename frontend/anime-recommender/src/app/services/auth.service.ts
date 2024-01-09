@@ -63,26 +63,30 @@ export class AuthService {
 
   private handleError(error: HttpErrorResponse) {
     let userFriendlyMessage = 'An unknown error occurred. Please try again later.';
-  
-    // Network or client-side error
-    if (error.error instanceof ErrorEvent) {
-      console.error('Client-side error:', error.error.message);
-      userFriendlyMessage = `A client-side error occurred: ${error.error.message}`;
-    } 
-    // Backend returned an unsuccessful response code
-    else {
-      console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
-  
-      // Customize user-friendly messages for specific status codes
-      if (error.status === 0) {
-        userFriendlyMessage = 'Cannot connect to the server. Please check your network connection.';
-      } else if (error.status === 401) {
-        userFriendlyMessage = 'Unauthorized request. Please login again.';
-      } else if (error.status === 404) {
-        userFriendlyMessage = 'Requested resource not found.';
-      } // Add more status codes as needed
+
+    // Check if it's a server-side error
+    if (error.status) {
+        // Check for validation error from backend and return it
+        if (error.status === 400 && error.error && error.error.error) {
+            return throwError(error.error.error);
+        }
+
+        console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+        // Customize user-friendly messages for specific status codes
+        if (error.status === 0) {
+            userFriendlyMessage = 'Cannot connect to the server. Please check your network connection.';
+        } else if (error.status === 401) {
+            userFriendlyMessage = 'Unauthorized request. Please login again.';
+        } else if (error.status === 404) {
+            userFriendlyMessage = 'Requested resource not found.';
+        }
+        // Add more status codes as needed
+    } else {
+        // Handle client-side or network error
+        console.error('Client-side error:', error.message);
+        userFriendlyMessage = `A client-side error occurred: ${error.message}`;
     }
-  
+
     // Return an observable with a user-facing error message
     return throwError(userFriendlyMessage);
   }
