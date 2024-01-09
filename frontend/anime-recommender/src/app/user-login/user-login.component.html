@@ -10,6 +10,7 @@
         <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="loginData.password" name="password" class="input-field password-input">
         <span class="toggle-password" (click)="togglePasswordVisibility()">{{ showPassword ? 'Hide' : 'Show' }}</span>
       </div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
       <button type="submit" class="action-button login-button">Login</button>
     </form>
     <button (click)="redirectToSignup()" class="action-button signup-button">Don't have an account? Sign up</button>

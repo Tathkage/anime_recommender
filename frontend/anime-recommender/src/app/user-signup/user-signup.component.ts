@@ -31,14 +31,15 @@ export class UserSignupComponent {
 
     onSignUp(): void {
       this.authService.signUp(this.signupData).subscribe(
-          result => {
-              this.router.navigate(['/anime-list']); // Redirect on success
-          },
-          error => {
-              this.errorMessage = error;
-          }
+        result => {
+          this.router.navigate(['/anime-list']); // Redirect on success
+          this.errorMessage = ''; // Clear error message
+        },
+        error => {
+          this.errorMessage = error; // Display error message
+        }
       );
-    }
+    }    
     
     redirectToLogin(): void {
       this.router.navigate(['/user-login']);

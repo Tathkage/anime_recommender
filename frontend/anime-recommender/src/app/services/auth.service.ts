@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    let userFriendlyMessage = 'An unknown error occurred. Please try again later.';
+    let errorMessage = 'An error occurred. Please try again later.';
 
     // Check if it's a server-side error
     if (error.status) {
@@ -71,23 +71,27 @@ export class AuthService {
             return throwError(error.error.error);
         }
 
+        if (error.status === 403 && error.error && error.error.error === 'locked out') {
+          errorMessage = 'Your account is temporarily locked due to multiple failed login attempts. Please try again later.';
+        }
+
         console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
         // Customize user-friendly messages for specific status codes
         if (error.status === 0) {
-            userFriendlyMessage = 'Cannot connect to the server. Please check your network connection.';
+            errorMessage = 'Cannot connect to the server. Please check your network connection.';
         } else if (error.status === 401) {
-            userFriendlyMessage = 'Unauthorized request. Please login again.';
+            errorMessage = 'Unauthorized request. Please login again.';
         } else if (error.status === 404) {
-            userFriendlyMessage = 'Requested resource not found.';
+            errorMessage = 'Requested resource not found.';
         }
         // Add more status codes as needed
     } else {
         // Handle client-side or network error
         console.error('Client-side error:', error.message);
-        userFriendlyMessage = `A client-side error occurred: ${error.message}`;
+        errorMessage = `A client-side error occurred: ${error.message}`;
     }
 
     // Return an observable with a user-facing error message
-    return throwError(userFriendlyMessage);
+    return throwError(errorMessage);
   }
 }

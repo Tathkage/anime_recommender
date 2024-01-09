@@ -23,6 +23,9 @@ import anime_recommender.scraper.scraper as scraper
 
 # Logger
 logger = logging.getLogger(__name__)
+
+# Defender
+# from defender import utils as defender_utils
         
 
 ################
@@ -106,11 +109,13 @@ def login_user(request):
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
     if user is not None:
+        # defender_utils.reset_failed_attempts(request, username)
         token, _ = Token.objects.get_or_create(user=user)
         response = Response({'detail': 'Login Successful'})
         response.set_cookie(key='auth_token', value=token.key, httponly=True, samesite='Lax')
         return response
     else:
+        # defender_utils.record_failed_attempt(request, username)
         return Response({'error': 'Invalid credentials'}, status=400)
 
 @api_view(['POST'])
