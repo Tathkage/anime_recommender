@@ -64,3 +64,8 @@
 .delete-account-button:hover {
   background-color: darkred;
 }
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}

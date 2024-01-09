@@ -3,6 +3,7 @@
 <button (click)="navigateToWatchlist()">Go to Watchlist</button>
 <button (click)="navigateToAnimeList()">Go to Animelist</button>
 <div class="user-settings">
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div> <!-- Error message display -->
   <form [formGroup]="userForm" (ngSubmit)="updateUser()">
     <!-- Change Email Section -->
     <div class="settings-section">

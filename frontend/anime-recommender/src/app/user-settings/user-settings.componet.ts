@@ -19,6 +19,7 @@ export class UserSettingsComponent {
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -82,10 +83,10 @@ export class UserSettingsComponent {
         },
         error => {
           console.error('Error updating user', error);
-          // Log the detailed error response
-          console.error('Error details', error.error);
-          // Handle error here
-        }
+          // Display error message to the user
+          // Assuming you have a mechanism to show this, like `errorMessage`
+          this.errorMessage = error;
+      }
       );
     } else {
       console.error('Form is invalid or userId is null');

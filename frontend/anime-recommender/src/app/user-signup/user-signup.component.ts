@@ -14,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 
 export class UserSignupComponent {
     signupData = { username: '', email: '', password: '' };
-    errorMessage ='Sorry bud, something went wrong.'
+    errorMessage = '';
     showPassword = false;
 
     constructor(private authService: AuthService, private router: Router) {}
@@ -30,13 +30,16 @@ export class UserSignupComponent {
       
 
     onSignUp(): void {
-        this.authService.signUp(this.signupData).subscribe(result => {
-        this.router.navigate(['/anime-list']); // Redirect on success
-        }, error => {
-        this.errorMessage = 'Sign-up failed: Please try again.'; // Display error message
-        });
+      this.authService.signUp(this.signupData).subscribe(
+          result => {
+              this.router.navigate(['/anime-list']); // Redirect on success
+          },
+          error => {
+              this.errorMessage = error;
+          }
+      );
     }
-
+    
     redirectToLogin(): void {
       this.router.navigate(['/user-login']);
     }

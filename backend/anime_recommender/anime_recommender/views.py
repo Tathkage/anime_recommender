@@ -6,6 +6,7 @@ import logging
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
 # Django Rest Framework imports
@@ -69,11 +70,23 @@ def register_user(request):
             if not all(k in data for k in ("username", "email", "password")):
                 return JsonResponse({'error': 'Missing fields'}, status=400)
 
+            # Validate password
+            try:
+                validate_password(data['password'])
+            except ValidationError as e:
+                # Process the error messages for a more specific response
+                for message in e.messages:
+                    if 'common' in message:
+                        return JsonResponse({'error': 'Password is too common and a different one must be chosen.'}, status=400)
+                    if 'too short' in message or 'at least 8 characters' in message:
+                        return JsonResponse({'error': 'Password must be at least 8 characters long.'}, status=400)
+                # General error message if the specific condition is not met
+                return JsonResponse({'error': ' '.join(e.messages)}, status=400)
+
             user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
             user.save()
             return JsonResponse({'message': 'User created successfully'})
         except Exception as e:
-            # Log the exception for internal review
             print(f"Registration Error: {e}")
             return JsonResponse({'error': 'An error occurred during registration'}, status=500)
     else:
@@ -148,10 +161,23 @@ def update_user(request):
 
     try:
         if new_password:
+            # Validate new password
+            try:
+                validate_password(new_password)
+            except ValidationError as e:
+                # Process the error messages for a more specific response
+                for message in e.messages:
+                    if 'common' in message:
+                        return JsonResponse({'error': 'Password is too common and a different one must be chosen.'}, status=400)
+                    if 'too short' in message or 'at least 8 characters' in message:
+                        return JsonResponse({'error': 'Password must be at least 8 characters long.'}, status=400)
+                return JsonResponse({'error': ' '.join(e.messages)}, status=400)
+
             if not current_password:
                 return JsonResponse({'error': 'Current password is required to change password'}, status=400)
             if not user.check_password(current_password):
                 return JsonResponse({'error': 'Incorrect current password'}, status=401)
+
             user.set_password(new_password)
         
         if username:
