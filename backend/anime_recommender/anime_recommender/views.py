@@ -5,9 +5,17 @@ import logging
 # Django imports
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.shortcuts import render, redirect
 
 # Django Rest Framework imports
 from rest_framework.authentication import TokenAuthentication
@@ -105,17 +113,27 @@ def verify_session(request):
 @permission_classes([AllowAny])
 @throttle_classes([AnonRateThrottle, UserRateThrottle])
 def login_user(request):
-    username = request.data.get('username')
+    email = request.data.get('email')
     password = request.data.get('password')
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        # defender_utils.reset_failed_attempts(request, username)
-        token, _ = Token.objects.get_or_create(user=user)
-        response = Response({'detail': 'Login Successful'})
-        response.set_cookie(key='auth_token', value=token.key, httponly=True, samesite='Lax')
-        return response
-    else:
-        # defender_utils.record_failed_attempt(request, username)
+
+    # Use Django's User model
+    User = get_user_model()
+
+    try:
+        # Retrieve the user by their email
+        user = User.objects.get(email=email)
+
+        # Now authenticate the user by username and password
+        if user.check_password(password):
+            # Generate or retrieve token
+            token, _ = Token.objects.get_or_create(user=user)
+            response = Response({'detail': 'Login Successful'})
+            response.set_cookie(key='auth_token', value=token.key, httponly=True, samesite='Lax')
+            return response
+        else:
+            return Response({'error': 'Invalid credentials'}, status=400)
+
+    except User.DoesNotExist:
         return Response({'error': 'Invalid credentials'}, status=400)
 
 @api_view(['POST'])
@@ -125,6 +143,79 @@ def logout_user(request):
     response = Response({'detail': 'Logout Successful'})
     response.delete_cookie('auth_token')
     return response
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@throttle_classes([AnonRateThrottle, UserRateThrottle])
+def forgot_password(request):
+    email = request.data.get('email')
+    try:
+        user = User.objects.get(email=email)
+        # Generate a password reset token and UID
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token}))
+
+        # Send email (customize the message and subject as needed)
+        send_mail(
+            'Password Reset Request',
+            f'Please click the link to reset your password: {reset_url}',
+            'from@example.com',
+            [email],
+            fail_silently=False,
+        )
+        return JsonResponse({'message': 'Password reset email sent.'})
+    except User.DoesNotExist:
+        # You might want to hide the fact that the email does not exist in your system for security reasons
+        return JsonResponse({'message': 'Password reset email sent.'})
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        # Decode the user ID from uidb64
+        uid = urlsafe_base64_decode(uidb64).decode()
+        User = get_user_model()
+        user = User.objects.get(pk=uid)
+
+        # Check if the token is valid
+        if default_token_generator.check_token(user, token):
+            # Render a form for the user to input a new password
+            # This can be a Django form or a simple HTML form that posts to another view to handle the password change
+            return render(request, 'password_reset_form.html', {'user': user})
+
+        else:
+            # Invalid token
+            return render(request, 'password_reset_invalid.html')
+    
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        # Handle exceptions
+        return render(request, 'password_reset_invalid.html')
+
+    # You may want to redirect the user or show a different page if the token is invalid or expired
+
+@api_view(['POST'])
+def change_password(request, user_id):
+    try:
+        User = get_user_model()
+        user = User.objects.get(pk=user_id)
+        new_password = request.POST.get('new_password')
+
+        # Validate and set the new password
+        validate_password(new_password)
+        user.set_password(new_password)
+        user.save()
+
+        return JsonResponse({'message': 'Password successfully reset.'})
+
+    except ValidationError as e:
+        # Redirect to the login page with an error message if password validation fails
+        return redirect('http://localhost:4200/user-login?error=password-validation-failed')
+    except User.DoesNotExist:
+        # Redirect to the login page with an error message if user is not found
+        return redirect('http://localhost:4200/user-login?error=user-not-found')
+    except Exception as e:
+        logger.error(f"Change Password Error: {e}")
+        # Redirect to the login page with a generic error message
+        return redirect('http://localhost:4200/user-login?error=unknown-error')
 
 
 ##################

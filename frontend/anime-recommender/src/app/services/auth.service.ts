@@ -54,6 +54,13 @@ export class AuthService {
     return this.isAuthenticatedSubject.asObservable();
   }
 
+  // Handles forgotten password
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}forgot-password/`, { email }, {
+      withCredentials: true
+    }).pipe(catchError(this.handleError));
+  }
+
   // Private method to handle authentication response
   private handleAuthenticationResponse(response: any) {
     if (response.detail === 'Login Successful') {
@@ -71,16 +78,16 @@ export class AuthService {
             return throwError(error.error.error);
         }
 
-        if (error.status === 403 && error.error && error.error.error === 'locked out') {
-          errorMessage = 'Your account is temporarily locked due to multiple failed login attempts. Please try again later.';
-        }
+        // if (error.status === 403 && error.error && error.error.error === 'locked out') {
+        //   errorMessage = 'Your account is temporarily locked due to multiple failed login attempts. Please try again later.';
+        // }
 
         console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
         // Customize user-friendly messages for specific status codes
         if (error.status === 0) {
             errorMessage = 'Cannot connect to the server. Please check your network connection.';
         } else if (error.status === 401) {
-            errorMessage = 'Unauthorized request. Please login again.';
+            return throwError('Not logged in');
         } else if (error.status === 404) {
             errorMessage = 'Requested resource not found.';
         }

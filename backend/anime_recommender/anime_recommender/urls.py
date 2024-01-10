@@ -18,7 +18,10 @@ from anime_recommender.views import (
     delete_user,
     update_user,
     get_current_user,
-    verify_session
+    verify_session,
+    forgot_password,
+    password_reset_confirm,
+    change_password,
 )
 
 urlpatterns = [
@@ -33,6 +36,9 @@ urlpatterns = [
     path('api/update-user/', update_user, name='update_user'),
     path('api/get-current-user/', get_current_user, name='get_current_user'),
     path('api/verify-session/', verify_session, name='verify_session'),
+    path('api/forgot-password/', forgot_password, name='forgot_password'),
+    path('reset-password-confirm/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
+    path('change-password/<int:user_id>/', change_password, name='change_password'),
 
     # Watchlist related routes
     path('api/create_watchlist/', create_watchlist, name='create_watchlist'),
