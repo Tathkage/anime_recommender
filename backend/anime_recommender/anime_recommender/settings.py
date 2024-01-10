@@ -201,3 +201,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Use SMTP backend
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail's SMTP server
+EMAIL_PORT = 587  # Port for TLS/STARTTLS
+EMAIL_USE_TLS = True  # Enable TLS
+EMAIL_HOST_USER = 'tathkage@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = config('APP_PASS')  # App Password
+DEFAULT_FROM_EMAIL = 'tathkage@gmail.com'  # Default from email (can be same as `EMAIL_HOST_USER`)
