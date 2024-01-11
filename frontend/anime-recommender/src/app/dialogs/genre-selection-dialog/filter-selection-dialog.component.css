@@ -10,4 +10,16 @@
     display: flex;
     align-items: center;
 }
+
+.studio-checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+    gap: 10px; /* Space between grid items */
+}
+
+/* Individual checkbox label */
+.studio-label {
+    display: flex;
+    align-items: center;
+}
   

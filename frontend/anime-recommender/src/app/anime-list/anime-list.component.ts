@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms'
 import { AnimeService } from '../services/anime.service';
 import { AuthService } from '../services/auth.service';
 import { WatchlistService } from '../services/watchlist.service';
-import { GenreSelectionDialogComponent } from '../dialogs/genre-selection-dialog/genre-selection-dialog.component';
+import { FilterSelectionDialogComponent } from '../dialogs/genre-selection-dialog/filter-selection-dialog.component';
 import { AddToWatchlistDialogComponent } from '../dialogs/add-to-watchlist-dialog/add-to-watchlist-dialog.component';
 import { Anime, AnimeData } from '../models/anime.model';
 
@@ -91,9 +91,11 @@ export class AnimeListComponent implements OnInit {
 		}
 	}
 	
-	openGenreSelectionDialog(): void {
-		const dialogRef = this.dialog.open(GenreSelectionDialogComponent, {
-			width: '250px',
+	openFilterSelectionDialog(): void {
+		const dialogRef = this.dialog.open(FilterSelectionDialogComponent, {
+			width: '500px',
+			height: '400px',
+			panelClass: 'custom-dialog-container',
 			data: { selectedGenres: this.selectedGenres }
 		});
 	

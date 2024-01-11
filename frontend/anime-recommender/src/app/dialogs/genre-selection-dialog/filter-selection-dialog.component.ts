@@ -1,16 +1,17 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
 	selector: 'app-genre-selection-dialog',
 	standalone: true,
-	imports: [CommonModule],
-	templateUrl: './genre-selection-dialog.component.html',
-	styleUrls: ['./genre-selection-dialog.component.css']
+	imports: [CommonModule, MatTabsModule],
+	templateUrl: './filter-selection-dialog.component.html',
+	styleUrls: ['./filter-selection-dialog.component.css']
 })
 
-export class GenreSelectionDialogComponent {
+export class FilterSelectionDialogComponent {
 	genres = [
 		{ name: 'Action', value: '1' },
 		{ name: 'Adventure', value: '2' },
@@ -31,20 +32,39 @@ export class GenreSelectionDialogComponent {
 		{ name: 'Supernatural', value: '37'},
 		{ name: 'Suspense', value: '41'}
 	];
-	selectedGenres: string[] = [];
 
-	constructor(public dialogRef: MatDialogRef<GenreSelectionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	studios = [
+		{ name: 'Toei Animation' },
+		{ name: 'Bandai Entertainment' },
+		{ name: 'Wit Studio' },
+		{ name: 'MAPPA' },
+		{ name: 'Ufotable' } // placeholders - several more studios need to be added
+	]
+
+	selectedGenres: string[] = [];
+	selectedStudios: string[] = [];
+
+	constructor(public dialogRef: MatDialogRef<FilterSelectionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		if (data.selectedGenres) {
 			this.selectedGenres = data.selectedGenres ? [...data.selectedGenres] : [];
 		}
 	}
 
-	onGenreCheckboxChange(genreValue: string, event: any): void {
+	onGenreCheckboxChange(genreName: string, event: any): void {
 		if (event.target.checked) {
-			this.selectedGenres.push(genreValue);
+			this.selectedGenres.push(genreName);
 		} 
 		else {
-			this.selectedGenres = this.selectedGenres.filter(g => g !== genreValue);
+			this.selectedGenres = this.selectedGenres.filter(g => g !== genreName);
+		}
+	}
+
+	onStudioCheckboxChange(studioName: string, event: any): void {
+		if (event.target.checked) {
+			this.selectedStudios.push(studioName);
+		} 
+		else {
+			this.selectedStudios = this.selectedStudios.filter(g => g !== studioName);
 		}
 	}
 

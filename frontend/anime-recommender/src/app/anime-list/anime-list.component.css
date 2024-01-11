@@ -291,3 +291,9 @@
 	margin: 5px 0; /* Spacing around the button */
   }
   
+
+
+/*Dialog Container*/
+.custom-dialog-container {
+    overflow-y: auto;
+}

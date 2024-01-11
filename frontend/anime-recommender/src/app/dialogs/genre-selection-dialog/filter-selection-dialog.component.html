@@ -1,0 +1,25 @@
+<mat-tab-group>
+	<mat-tab label="Genres">
+		<div class="genre-checkbox-container">
+			<label class="genre-label" *ngFor="let genre of genres">
+				<input type="checkbox" [value]="genre.name" 
+				[checked]="selectedGenres.includes(genre.name)" 
+				(change)="onGenreCheckboxChange(genre.name, $event)">
+				{{ genre.name }}
+			</label>
+		</div>
+	</mat-tab>
+
+	<mat-tab label="Studios">
+		<div class="studio-checkbox-container">
+			<label class="studio-label" *ngFor="let studio of studios">
+			  <input type="checkbox" [value]="studio.name" 
+					 [checked]="selectedStudios.includes(studio.name)" 
+					 (change)="onStudioCheckboxChange(studio.name, $event)">
+			  {{ studio.name }}
+			</label>
+		  </div>
+	</mat-tab>
+</mat-tab-group>
+
+<button (click)="confirmSelection()">Confirm</button>
