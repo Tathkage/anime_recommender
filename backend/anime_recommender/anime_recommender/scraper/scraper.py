@@ -1,8 +1,33 @@
 from bs4 import BeautifulSoup
 import httpx
 import re
+import os
+import string
+import requests
+from urllib.request import urlretrieve
 
 GENRE_BASE_URL = "https://myanimelist.net/anime/genre/"
+
+def sanitize_filename(filename):
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    return ''.join(char if char in valid_chars else '_' for char in filename)
+
+def save_image(url, title):
+    image_directory = 'media/anime_images/'
+    os.makedirs(image_directory, exist_ok=True)  # Create directory if it doesn't exist
+    sanitized_title = sanitize_filename(title)
+    file_extension = url.split('.')[-1]  # Extract the file extension from the URL
+    file_name = f"{sanitized_title}.{file_extension}"
+    file_path = os.path.join(image_directory, file_name)
+    
+    # Download the image and save it
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(file_path, 'wb') as f:
+            f.write(response.content)
+        return file_path
+    else:
+        raise Exception(f"Failed to download image from URL: {url}")
 
 async def scrapeWebsite(url):
     headers = {
@@ -46,8 +71,9 @@ async def genreScraper(genre, urlSuffix):
             infoDiv = category.find("div", class_="info")
             ratingDiv = category.find("div", class_="scormem-item")
             descriptionP = category.find("p", class_="preline")
+            imageDiv = category.find("div", class_="image")
             
-            if titleTag and infoDiv and ratingDiv and descriptionP:
+            if titleTag and infoDiv and ratingDiv and descriptionP and imageDiv:
                 animeTitle = titleTag.get_text(strip=True)
                 
                 # Extract release year from the first span in the info div
@@ -72,6 +98,11 @@ async def genreScraper(genre, urlSuffix):
                 
                 # Extract description from the description paragraph
                 animeDescription = descriptionP.get_text(strip=True)
+
+                # Extract the image URL from the image div
+                imageUrl = imageDiv.find("img")["data-src"]
+                localImagePath = save_image(imageUrl, animeTitle)
+                completeImageUrl = f"http://localhost:8000/{localImagePath}"
                 
                 animeInfo.append({
                     "Title": animeTitle,
@@ -81,7 +112,8 @@ async def genreScraper(genre, urlSuffix):
                     "Episode Length": episodeLength,
                     "Description": animeDescription,
                     "Rating": animeRating,
-                    "Genre": [genre]
+                    "Genre": [genre],
+                    "Image": completeImageUrl
                 })
             
         paginationLinks = soup.find_all("a", class_="link", href=True)

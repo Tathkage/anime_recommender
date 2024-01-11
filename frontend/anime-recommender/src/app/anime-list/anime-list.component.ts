@@ -121,7 +121,8 @@ export class AnimeListComponent implements OnInit {
 				'Episode Count': selectedAnime['Episode Count'],
 				'Episode Length': selectedAnime['Episode Length'],
 				'Release Year': selectedAnime['Release Year'],
-				Description: selectedAnime.Description
+				Description: selectedAnime.Description,
+				Image: selectedAnime.Image
 			  };
 
 			this.animeService.addAnimeToDatabase(animeToSave).subscribe(animeResponse => {

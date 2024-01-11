@@ -10,6 +10,7 @@ class Anime(models.Model):
     anime_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=255, null=True, blank=True)
+    image = models.ImageField(upload_to='anime_images/')
 
     def __str__(self):
         return self.anime_title
