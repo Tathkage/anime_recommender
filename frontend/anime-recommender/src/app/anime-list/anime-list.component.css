@@ -235,6 +235,10 @@
 	background-color: #0056b3;
   }
 
+  .poster-col {
+	width: 40%;
+  }
+
   .title-col {
 	width: 60%; /* Adjust as needed */
   }

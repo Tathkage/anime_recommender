@@ -67,11 +67,12 @@ export class AnimeService {
     const isEpisodeLengthValid = typeof anime['Episode Length'] === 'number' && !isNaN(anime['Episode Length']);
     const isReleaseYearValid = typeof anime['Release Year'] === 'number' && !isNaN(anime['Release Year']);
     const isDescriptionValid = typeof anime.Description === 'string';
+    const isImageValid = typeof anime.Image == 'string' && anime.Image.trim() !== '';
   
     // Return true only if all conditions are true
     return isTitleValid && isRatingValid && isStatusValid && 
            isEpisodeCountValid && isEpisodeLengthValid && 
-           isReleaseYearValid && isDescriptionValid;
+           isReleaseYearValid && isDescriptionValid && isImageValid;
   }
 
   private mapAnimeToData(anime: any): any {
@@ -83,6 +84,7 @@ export class AnimeService {
       anime_rating: anime.Rating,
       description: anime.Description,
       status: anime.Status,
+      image: anime.Image,
     };
   }
 }

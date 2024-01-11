@@ -210,3 +210,7 @@ EMAIL_USE_TLS = True  # Enable TLS
 EMAIL_HOST_USER = config('EMAIL_HOST')  # Your Gmail address
 EMAIL_HOST_PASSWORD = config('APP_PASS')  # App Password
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST')  # Default from email (can be same as `EMAIL_HOST_USER`)
+
+# Serve Static/Media Files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

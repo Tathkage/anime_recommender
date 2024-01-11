@@ -34,6 +34,7 @@
 		<table class="anime-table">
 			<thead>
 				<tr>
+					<th class="poster-col">Poster</th>
 					<th class="title-col">Title and Description</th>
 					<th class="rating-col">Rating</th>
 					<th class="status-col">Status</th>
@@ -45,6 +46,9 @@
 			</thead>
 			<tbody>
 				<tr *ngFor="let anime of animeList | slice:(currentPage-1)*itemsPerPage:currentPage*itemsPerPage; let i = index">
+					<td>
+						<img [src]="anime.Image" alt="{{ anime.Title }}" width="100" height="150">
+					</td>
 					<td>
 						<div class="anime-title">{{ anime.Title }}</div>
 						<div [ngClass]="{'anime-description': true, 'collapsed': !anime.isExpanded}">
@@ -59,9 +63,11 @@
 					<td>{{ anime['Episode Count'] }}</td>
 					<td>{{ anime['Episode Length'] }} min</td>
 					<td>{{ anime['Release Year'] }}</td>
-					<td><button (click)="openAddToWatchlistDialog(anime)">Add to Watchlist</button></td>
+					<td>
+						<button (click)="openAddToWatchlistDialog(anime)">Add to Watchlist</button>
+					</td>
 				</tr>
-			</tbody>
+			</tbody>			
 		</table>
 	</div>
 </div>

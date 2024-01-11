@@ -6,6 +6,7 @@ export interface Anime {
     'Episode Length': number;
     'Release Year': number;
     Description: string;
+    Image: string;
     isExpanded?: boolean;
 }
   
