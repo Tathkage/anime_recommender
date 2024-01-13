@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
@@ -12,13 +12,17 @@ import { AuthService } from '../services/auth.service';
   styleUrl: './user-login.component.css'
 })
 
-export class UserLoginComponent {
+export class UserLoginComponent implements OnInit {
   loginData = { email: '', password: '' };
   errorMessage = '';
   successMessage = '';
   showPassword = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private readonly google: AuthService
+    ) { }
 
   ngOnInit(): void {
     this.authService.isLoggedIn().subscribe(
@@ -46,7 +50,7 @@ export class UserLoginComponent {
         this.errorMessage = error; // Display error message
       }
     );
-  } 
+  }
 
   onForgotPassword(): void {
     const email = prompt('Please enter your email to reset password:');
