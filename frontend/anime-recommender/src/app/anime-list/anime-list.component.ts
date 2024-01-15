@@ -93,7 +93,7 @@ export class AnimeListComponent implements OnInit {
 	
 	openFilterSelectionDialog(): void {
 		const dialogRef = this.dialog.open(FilterSelectionDialogComponent, {
-			width: '500px',
+			width: '600px',
 			height: '400px',
 			panelClass: 'custom-dialog-container',
 			data: { selectedGenres: this.selectedGenres }
@@ -105,7 +105,7 @@ export class AnimeListComponent implements OnInit {
 				console.log('Selected Genres:', this.selectedGenres);
 			}
 		});
-	  }
+	}
 
 	openAddToWatchlistDialog(selectedAnime: Anime): void {
 		const dialogRef = this.dialog.open(AddToWatchlistDialogComponent, {

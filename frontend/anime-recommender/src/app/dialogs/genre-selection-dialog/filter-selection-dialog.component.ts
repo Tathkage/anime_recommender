@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ElementRef, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -11,7 +11,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 	styleUrls: ['./filter-selection-dialog.component.css']
 })
 
-export class FilterSelectionDialogComponent {
+export class FilterSelectionDialogComponent implements AfterViewInit, OnDestroy {
+	private scrollTimeout: any;
+
 	genres = [
 		{ name: 'Action', value: '1' },
 		{ name: 'Adventure', value: '2' },
@@ -44,7 +46,11 @@ export class FilterSelectionDialogComponent {
 	selectedGenres: string[] = [];
 	selectedStudios: string[] = [];
 
-	constructor(public dialogRef: MatDialogRef<FilterSelectionDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(public dialogRef: MatDialogRef<FilterSelectionDialogComponent>, 
+		@Inject(MAT_DIALOG_DATA) public data: any,
+		private el: ElementRef,
+		private renderer: Renderer2
+	) {
 		if (data.selectedGenres) {
 			this.selectedGenres = data.selectedGenres ? [...data.selectedGenres] : [];
 		}
@@ -70,5 +76,20 @@ export class FilterSelectionDialogComponent {
 
 	confirmSelection(): void {
 		this.dialogRef.close(this.selectedGenres);
+	}
+
+	ngAfterViewInit(): void {
+		const scrollableContent = this.el.nativeElement.querySelector('.scrollable-content');
+		this.renderer.listen(scrollableContent, 'scroll', () => {
+			this.renderer.addClass(scrollableContent, 'scrolling');
+			clearTimeout(this.scrollTimeout);
+			this.scrollTimeout = setTimeout(() => {
+				this.renderer.removeClass(scrollableContent, 'scrolling');
+			}, 2500);
+		});
+	}
+
+	ngOnDestroy(): void {
+		clearTimeout(this.scrollTimeout);
 	}
 }

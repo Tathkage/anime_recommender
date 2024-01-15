@@ -1,6 +1,7 @@
-<mat-tab-group>
+
+<mat-tab-group dynamicHeight>
 	<mat-tab label="Genres">
-		<div class="genre-checkbox-container">
+		<div class="scrollable-content">
 			<label class="genre-label" *ngFor="let genre of genres">
 				<input type="checkbox" [value]="genre.name" 
 				[checked]="selectedGenres.includes(genre.name)" 
@@ -11,7 +12,7 @@
 	</mat-tab>
 
 	<mat-tab label="Studios">
-		<div class="studio-checkbox-container">
+		<div class="scrollable-content">
 			<label class="studio-label" *ngFor="let studio of studios">
 			  <input type="checkbox" [value]="studio.name" 
 					 [checked]="selectedStudios.includes(studio.name)" 
@@ -22,4 +23,6 @@
 	</mat-tab>
 </mat-tab-group>
 
-<button (click)="confirmSelection()">Confirm</button>
+<div class = "button-container">
+	<button (click)="confirmSelection()">Confirm</button>
+</div>

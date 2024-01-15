@@ -22,4 +22,73 @@
     display: flex;
     align-items: center;
 }
+
+.scrollable-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-height: 300px;
+    max-width: 600px;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Custom scrollbar styles */
+.scrollable-content::-webkit-scrollbar-track {
+    background-color: rgba(240, 240, 240, 0.5); /* Light grey track with transparency */
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Transparent by default */
+    border-radius: 10px;
+    transition: background-color 2s ease;
+}
+
+.scrollable-content.scrolling::-webkit-scrollbar-thumb {
+    background-color: rgba(136, 136, 136, 0.5); /* Visible when scrolling */
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(85, 85, 85, 0.5); /* Slightly darker on hover */
+}
+
+.scrollable-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* For Firefox */
+.scrollable-content {
+    scrollbar-width: 7px;
+    scrollbar-color: transparent rgba(240, 240, 240, 0.5);
+}
+
+.scrollable-content.scrolling {
+    scrollbar-color: rgba(136, 136, 136, 0.5) rgba(240, 240, 240, 0.5);
+}
+
+.button-container {
+    height: 50px;
+    width: 100%;
+    background-color: #f0f0f0;
+    box-shadow: 0 -1px 5px rgba(0,0,0,0.2); /* Optional: adds a shadow for depth */
+    z-index: 1000; /* Keep this to ensure it's above other content */
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+
+.button-container button {
+    background-color: #007bff;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s;
+}
   

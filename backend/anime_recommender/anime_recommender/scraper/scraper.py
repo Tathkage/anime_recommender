@@ -101,8 +101,13 @@ async def genreScraper(genre, urlSuffix):
 
                 # Extract the image URL from the image div
                 imageUrl = imageDiv.find("img")["data-src"]
-                localImagePath = save_image(imageUrl, animeTitle)
-                completeImageUrl = f"http://localhost:8000/{localImagePath}"
+
+                # Image doesn't save to local host and is taken directly from the source
+                completeImageUrl = f"{imageUrl}"
+
+                # Image saves to local host
+                # localImagePath = save_image(imageUrl, animeTitle) 
+                # completeImageUrl = f"http://localhost:8000/{localImagePath}"
                 
                 animeInfo.append({
                     "Title": animeTitle,
