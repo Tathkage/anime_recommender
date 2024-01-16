@@ -2,11 +2,12 @@ import { Component, Inject, ElementRef, Renderer2, AfterViewInit, OnDestroy } fr
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
 	selector: 'app-genre-selection-dialog',
 	standalone: true,
-	imports: [CommonModule, MatTabsModule],
+	imports: [CommonModule, MatTabsModule, FormsModule],
 	templateUrl: './filter-selection-dialog.component.html',
 	styleUrls: ['./filter-selection-dialog.component.css']
 })
@@ -37,7 +38,21 @@ export class FilterSelectionDialogComponent implements AfterViewInit, OnDestroy 
 
 	studios = [
 		{ name: 'Toei Animation' },
+		{ name: 'Discotek Media' },
+		{ name: 'TMS Entertainment' },
+		{ name: 'Studio Deen' },
+		{ name: 'Pierrot' },
+		{ name: 'OLM' },
+		{ name: 'AIC' },
+		{ name: 'TBS' },
+		{ name: 'A-1 Pictures' },
+		{ name: 'Shin-Ei Animation' },
+		{ name: 'bilibili' },
+		{ name: 'DLE' },
 		{ name: 'Bandai Entertainment' },
+		{ name: 'Tatsunoko Production' },
+		{ name: 'Tencent Penguin Pictures' },
+		{ name: 'Shogakukan-Shueisha Productions' },
 		{ name: 'Wit Studio' },
 		{ name: 'MAPPA' },
 		{ name: 'Ufotable' } // placeholders - several more studios need to be added
@@ -45,6 +60,7 @@ export class FilterSelectionDialogComponent implements AfterViewInit, OnDestroy 
 
 	selectedGenres: string[] = [];
 	selectedStudios: string[] = [];
+	searchText: string = '';
 
 	constructor(public dialogRef: MatDialogRef<FilterSelectionDialogComponent>, 
 		@Inject(MAT_DIALOG_DATA) public data: any,
@@ -74,19 +90,31 @@ export class FilterSelectionDialogComponent implements AfterViewInit, OnDestroy 
 		}
 	}
 
+	get filteredGenres() {
+		return this.genres.filter(genre => genre.name.toLowerCase().includes(this.searchText.toLowerCase()));
+	}
+
+	get filteredStudios() {
+		return this.studios.filter(studio => studio.name.toLowerCase().includes(this.searchText.toLowerCase()));
+	}
+
+	resetSearchBar(): void {
+		this.searchText = '';
+	}
+
 	confirmSelection(): void {
 		this.dialogRef.close(this.selectedGenres);
 	}
 
 	ngAfterViewInit(): void {
-		const scrollableContent = this.el.nativeElement.querySelector('.scrollable-content');
-		this.renderer.listen(scrollableContent, 'scroll', () => {
-			this.renderer.addClass(scrollableContent, 'scrolling');
-			clearTimeout(this.scrollTimeout);
-			this.scrollTimeout = setTimeout(() => {
-				this.renderer.removeClass(scrollableContent, 'scrolling');
-			}, 2500);
-		});
+		// const scrollableContent = this.el.nativeElement.querySelector('.scrollable-content');
+		// this.renderer.listen(scrollableContent, 'scroll', () => {
+		// 	this.renderer.addClass(scrollableContent, 'scrolling');
+		// 	clearTimeout(this.scrollTimeout);
+		// 	this.scrollTimeout = setTimeout(() => {
+		// 		this.renderer.removeClass(scrollableContent, 'scrolling');
+		// 	}, 2500);
+		// });
 	}
 
 	ngOnDestroy(): void {

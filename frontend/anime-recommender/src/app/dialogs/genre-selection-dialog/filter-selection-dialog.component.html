@@ -1,8 +1,8 @@
 
-<mat-tab-group dynamicHeight>
+<mat-tab-group dynamicHeight (selectedIndexChange)="resetSearchBar()">
 	<mat-tab label="Genres">
 		<div class="scrollable-content">
-			<label class="genre-label" *ngFor="let genre of genres">
+			<label class="genre-label" *ngFor="let genre of filteredGenres">
 				<input type="checkbox" [value]="genre.name" 
 				[checked]="selectedGenres.includes(genre.name)" 
 				(change)="onGenreCheckboxChange(genre.name, $event)">
@@ -13,7 +13,7 @@
 
 	<mat-tab label="Studios">
 		<div class="scrollable-content">
-			<label class="studio-label" *ngFor="let studio of studios">
+			<label class="studio-label" *ngFor="let studio of filteredStudios">
 			  <input type="checkbox" [value]="studio.name" 
 					 [checked]="selectedStudios.includes(studio.name)" 
 					 (change)="onStudioCheckboxChange(studio.name, $event)">
@@ -23,6 +23,7 @@
 	</mat-tab>
 </mat-tab-group>
 
-<div class = "button-container">
+<div class="button-container">
+	<input type="text" [(ngModel)]="searchText" placeholder="Search..." class="search-bar">
 	<button (click)="confirmSelection()">Confirm</button>
 </div>
