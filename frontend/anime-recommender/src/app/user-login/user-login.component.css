@@ -23,7 +23,7 @@
 
 .login-character {
   position: absolute;
-  bottom: 88.8%;
+  bottom: 85.572%;
   left: 65%;
   width: 150px;
   height: auto;
@@ -34,11 +34,19 @@
   position: absolute;
   top: -35px;
   left: 0;
-  font-size: 32px;
-  color: #333;
-  font-weight: bold;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #333333;
+  font-weight: 700;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: capitalize;
   padding: 5px 10px;
   border-radius: 5px;
+  text-shadow: 0 8px 32px rgba(31, 38, 135, 0.5);
 }
 
 .success-message, .error-message {
@@ -91,12 +99,20 @@
 .toggle-password {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 15px;
   cursor: pointer;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 14px;
+  letter-spacing: -1px;
+  word-spacing: 2px;
   color: #555555;
+  font-weight: 700;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: uppercase;
   background: transparent;
   border: none;
-  font-weight: bold;
 }
 
 .forgot-password-button {
@@ -109,16 +125,72 @@
   margin-bottom: 20px;
 }
 
-.action-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #ee9ca7;
-  color: white;
-  border: none;
-  margin-top: 10px;
-  border-radius: 4px;
-  cursor: pointer;
+.action-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-button,
+.action-button *,
+.action-button :after,
+.action-button :before,
+.action-button:after,
+.action-button:before {
+  border: 0 solid;
   box-sizing: border-box;
+}
+
+.action-button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  background-color: #000;
+  background-image: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
+  margin: 0;
+  -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+  padding: 0;
+  cursor: default;
+}
+
+.action-button:-moz-focusring {
+  outline: auto;
+}
+
+.action-button svg {
+  display: block;
+  vertical-align: middle;
+}
+
+.action-button [hidden] {
+  display: none;
+}
+
+.action-button {
+  flex: 1;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid;
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: #000;
+  display: block;
+  font-weight: 900;
+  -webkit-mask-image: none;
+  overflow: hidden;
+  position: relative;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+
+.action-button:hover {
+  box-shadow: 0 6px 0 -4px #fff, 0 9px 0 -4px #aaa, 0 12px 0 -4px #000;
+  transform: translateY(-5px);
 }
 
 .login-button {
@@ -130,22 +202,41 @@
 }
 
 .signup-button {
-  background-color: rgb(172, 172, 172);
+  background-color: #d3d3d3;
 }
 
 .signup-button:hover {
-  background-color: #8d8d8d;
+  background-color: #a9a9a9;
 }
 
 h2 {
   text-align: center;
-  color: #333;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 24px;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #333333;
+  font-weight: 400;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: capitalize;
   margin-bottom: 20px;
 }
 
 /* Responsive design */
 @media (max-width: 600px) {
-  .login-box {
-    margin: 20px;
+  .action-buttons-container {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    margin-bottom: 10px; /* Add space between stacked buttons */
+  }
+
+  /* Last button should not have margin at the bottom */
+  .action-button:last-child {
+    margin-bottom: 0;
   }
 }
