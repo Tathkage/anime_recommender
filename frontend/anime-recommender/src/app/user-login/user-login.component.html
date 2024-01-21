@@ -1,19 +1,23 @@
 <div class="login-container">
-  <h2>Login</h2>
-  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-  <form (submit)="onLogin()">
-      <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="text" id="email" [(ngModel)]="loginData.email" name="email" class="input-field">
-      </div>
-      <div class="form-group password-group">
-          <label for="password">Password:</label>
-          <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="loginData.password" name="password" class="input-field password-input">
-          <span class="toggle-password" (click)="togglePasswordVisibility()">{{ showPassword ? 'Hide' : 'Show' }}</span>
-      </div>
-      <button type="button" (click)="onForgotPassword()" class="forgot-password-button">Forgot Password?</button>
-      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-      <button type="submit" class="action-button login-button">Login</button>
-  </form>
-  <button (click)="redirectToSignup()" class="action-button signup-button">Don't have an account? Sign up</button>
+  <div class="login-box">
+    <img src="../../assets/images/ChibiFemaleMascotSitting.png" alt="Character" class="login-character">
+    <div class="anime-rec-title">Anime Rec</div>
+    <h2>Login</h2>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    <form (submit)="onLogin()">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="text" id="email" [(ngModel)]="loginData.email" name="email" class="input-field">
+        </div>
+        <div class="form-group password-group">
+            <label for="password">Password:</label>
+            <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="loginData.password" name="password" class="input-field password-input">
+            <span class="toggle-password" (click)="togglePasswordVisibility()">{{ showPassword ? 'HIDE' : 'SHOW' }}</span>
+        </div>
+        <div class="action-buttons-container">
+          <button type="submit" class="action-button login-button">Login</button>
+          <button (click)="redirectToSignup()" class="action-button signup-button">Sign Up</button>
+        </div>
+    </form>
+  </div>
 </div>
