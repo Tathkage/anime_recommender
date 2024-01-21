@@ -14,38 +14,25 @@ import { AuthService } from '../services/auth.service';
 
 export class UserSignupComponent {
     signupData = { username: '', email: '', password: '' };
-    errorMessage = '';
-    showPassword = false;
+    errorMessage ='Sorry bud, something went wrong.'
 
     constructor(private authService: AuthService, private router: Router) {}
 
     ngOnInit(): void {
-      this.authService.isLoggedIn().subscribe(isLoggedIn => {
-        if (isLoggedIn) {
-          // Redirect to anime list if the user is already logged in
-          this.router.navigate(['/anime-list']);
-        }
-      });
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/anime-list']);
+      }
     }
-      
 
     onSignUp(): void {
-      this.authService.signUp(this.signupData).subscribe(
-        result => {
-          this.router.navigate(['/anime-list']); // Redirect on success
-          this.errorMessage = ''; // Clear error message
-        },
-        error => {
-          this.errorMessage = error; // Display error message
-        }
-      );
-    }    
-    
-    redirectToLogin(): void {
-      this.router.navigate(['/user-login']);
+        this.authService.signUp(this.signupData).subscribe(result => {
+        this.router.navigate(['/anime-list']); // Redirect on success
+        }, error => {
+        this.errorMessage = 'Sign-up failed: Please try again.'; // Display error message
+        });
     }
 
-    togglePasswordVisibility(): void {
-      this.showPassword = !this.showPassword;
+    redirectToLogin(): void {
+      this.router.navigate(['/user-login']);
     }
 }
