@@ -12,7 +12,14 @@ export class UserLogoutComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogout(): void {
-    this.authService.logout();
-    this.router.navigate(['/user-login']);
+    this.authService.logout().subscribe(
+      response => {
+        console.log('Logout successful', response);
+        this.router.navigate(['/user-login']);
+      },
+      error => {
+        console.error('Error during logout:', error);
+      }
+    );
   }
 }

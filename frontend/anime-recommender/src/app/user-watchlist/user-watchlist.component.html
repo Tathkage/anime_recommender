@@ -1,17 +1,35 @@
 <button (click)="onLogout()">Logout</button>
+<button (click)="navigateToUserSettings()">User Settings</button>
 <button (click)="navigateToAnimeList()">Go to Anime List</button>
 <div class="watchlist-container">
-    <h2>User Watchlist</h2>
-    <table class="watchlist-table">
-        <thead>
-            <tr>
-                <th>Anime Title</th>
-                <th>Status</th>
-                <th>Episodes Watched</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data rows will be populated here -->
-        </tbody>
-    </table>
+  <h2>User Watchlist</h2>
+  <table>
+    <tr *ngFor="let watchlist of watchlists">
+      <td>{{ watchlist.watchlist_title }}</td>
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="viewWatchlist(watchlist.watchlist_id)">View</button>
+      </td>
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="showUpdateWatchlistPopup(watchlist.watchlist_id)">Update</button>
+      </td>
+      <td>
+        <button *ngIf="watchlist.watchlist_id !== undefined" (click)="confirmDeleteWatchlist(watchlist.watchlist_id)">Delete</button>
+      </td>
+    </tr>      
+  </table>
 </div>
+<button (click)="showCreateWatchlistPopup()">Create Watchlist</button>
+
+<!-- Popup for creating a new watchlist -->
+<div class="popup" *ngIf="showCreatePopup">
+    <input type="text" #newWatchlistInput placeholder="Enter watchlist title">
+    <button (click)="createWatchlist(newWatchlistInput.value); showCreatePopup = false">Create</button>
+    <button (click)="showCreatePopup = false">Cancel</button>
+  </div>
+  
+  <!-- Popup for updating a watchlist -->
+  <div class="popup" *ngIf="showUpdatePopup">
+    <input type="text" #updateWatchlistInput placeholder="Enter new title">
+    <button (click)="updateWatchlist(selectedWatchlistId, updateWatchlistInput.value); showUpdatePopup = false">Update</button>
+    <button (click)="showUpdatePopup = false">Cancel</button>
+  </div>  
