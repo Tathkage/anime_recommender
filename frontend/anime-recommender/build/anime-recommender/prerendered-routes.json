@@ -1,0 +1,9 @@
+{
+  "routes": [
+    "/anime-list",
+    "/user-login",
+    "/user-settings",
+    "/user-signup",
+    "/user-watchlist"
+  ]
+}
